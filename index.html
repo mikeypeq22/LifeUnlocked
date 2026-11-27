@@ -286,6 +286,7 @@ details.card[open] summary{margin-bottom:8px}
 /* ---------- toast + dialogs ---------- */
 .trophy{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);z-index:70;width:min(380px,calc(100vw - 24px));background:#FFFDF8;border:2px solid #E9C46A;border-radius:24px;box-shadow:0 22px 60px #1F474455;padding:14px 16px 16px;display:flex;gap:14px;align-items:center;cursor:pointer;overflow:hidden;animation:trophyIn .55s cubic-bezier(.2,1.5,.4,1)}
 .trophy[hidden]{display:none}
+.dwarn{background:#FDECE6;color:#8E3B25;border-radius:12px;padding:8px 12px;font-size:13px;font-weight:700;margin:4px 0 10px;text-align:left}.dwarn[hidden]{display:none}
 .trophy .cup{position:relative;flex:none;width:84px;height:84px;display:grid;place-items:center}
 .trophy .rays{position:absolute;inset:-14px;animation:spin 6s linear infinite}
 .trophy .cup svg.c{position:relative;width:70px;height:70px;animation:cupPop .7s .15s both cubic-bezier(.2,1.6,.4,1)}
@@ -423,7 +424,7 @@ dialog::backdrop{background:#1F474466}
 <dialog class="sheet" id="sheet"><div class="inner" id="sheetInner"></div></dialog>
 <dialog class="discovery" id="discovery" aria-labelledby="discoveryTitle"><div class="inner">
   <div id="discoveryArt"></div><span class="eyebrow">New career discovered</span><h2 id="discoveryTitle"></h2><p id="discoveryFact"></p><p class="muted" id="discoveryReward"></p>
-  <div class="acts"><button class="btn" data-act="discoveryKeep">Keep exploring</button><button class="btn primary" data-act="discoverySwitch">Start this career</button></div>
+  <p class="dwarn" id="discoveryWarn" hidden></p><div class="acts"><button class="btn" id="discoveryKeepBtn" data-act="discoveryKeep">Keep exploring</button><button class="btn primary" id="discoverySwitchBtn" data-act="discoverySwitch">Start this career</button></div>
 </div></dialog>
 <script>
 'use strict';
@@ -656,7 +657,7 @@ function careerDiscipline(i) { if (!i) return 9; const n = nodeOf(byName[careers
 const BAL = {
   // per career tier: obstacle hp/attack/xp/money at stage 1, and the mastery-boss gate (level, skills)
   tiers: [null,
-    { h: 700, a: 12, x: 10, m: 6, lv: 15, lv2: 30, sk: 15, sk2: 25 },
+    { h: 450, hg: 1.857, a: 12, x: 10, m: 6, lv: 15, lv2: 30, sk: 15, sk2: 25 },
     { h: 12000, a: 38, x: 20, m: 20, lv: 50, lv2: 120, sk: 50, sk2: 110 },
     { h: 18000, a: 56, x: 50, m: 55, lv: 130, lv2: 260, sk: 100, sk2: 200 },
     { h: 34000, a: 85, x: 95, m: 120, lv: 220, lv2: 450, sk: 150, sk2: 260 }],
@@ -714,7 +715,7 @@ const generalBase = generalEnemies.map(e => e.slice());
 function trackEnemies(t) {
   if (!t) { generalEnemies.forEach((e, j) => { e[4] = Math.max(1, Math.round(generalBase[j][4] * BAL.lifeXP)); }); return generalEnemies; }
   const T = BAL.tiers[careerTier(t)];
-  return tracks[t].map((name, j) => [name, '', Math.round(T.h * Math.pow(BAL.hpG, j)), Math.round(T.a * Math.pow(BAL.atkG, j) * 10) / 10, Math.round(T.x * Math.pow(BAL.xpG, j)), Math.round(T.m * Math.pow(BAL.mG, j)), careers[t][0], j === 5 ? 'Mastery boss' : tierNames[careerTier(t)] + ' challenge']);
+  return tracks[t].map((name, j) => [name, '', Math.round(T.h * Math.pow(T.hg ?? BAL.hpG, j)), Math.round(T.a * Math.pow(BAL.atkG, j) * 10) / 10, Math.round(T.x * Math.pow(BAL.xpG, j)), Math.round(T.m * Math.pow(BAL.mG, j)), careers[t][0], j === 5 ? 'Mastery boss' : tierNames[careerTier(t)] + ' challenge']);
 }
 let enemies = generalEnemies;
 function setTrack(i) { s.track = i; const p = progress(); enemies = trackEnemies(i); s.stage = clamp(p.stage, 0, enemies.length - 1); s.unlocked = clamp(p.unlocked, 0, enemies.length - 1); }
@@ -799,8 +800,16 @@ function suggestNext() {
   return best;
 }
 function switchTrack(t) { if (t === s.track) return; Object.assign(progress(), { stage: s.stage, unlocked: s.unlocked }); setTrack(t); s.retry = 0; s.retryTarget = null; s.lossStreak = 0; s.practice = null; s.practiceEnemy = null; resetBattle(); }
+// can your current build beat the obstacle this career would start you on?
+function careerReady(t) { const p = s.progress[t] || {}, E = trackEnemies(t), j = clamp(p.stage ?? 0, 0, Math.min(p.unlocked || 0, E.length - 1)); return battleForecast(E[j], j).ok; }
+// a career whose very first obstacle is a wall: with auto-switch on, go back to the previous job instead of practicing forever
+function wallBack() {
+  if (!s.autoNext || s.unlocked !== 0 || !s.track || s.prevCareer == null || s.prevCareer === s.track || !careers[s.prevCareer]) return false;
+  const from = careers[s.track][0], back = s.prevCareer, to = back ? careers[back][0] : 'Everyday Life';
+  setCareer(back); log(from + ' is too tough for now. Back to ' + to + ' to grow stronger.'); notice(from + ' is too tough for now · back to ' + to); return true;
+}
 // your job decides which obstacles you face
-function setCareer(i) { if (i !== 0 && !qualifies(careers[i])) return false; if (s.career === i && s.track === i) return true; s.career = i; if (s.track !== i) switchTrack(i); else resetBattle(); return true; }
+function setCareer(i) { if (i !== 0 && !qualifies(careers[i])) return false; if (s.career === i && s.track === i) return true; if (s.career !== i) s.prevCareer = s.career; s.career = i; if (s.track !== i) switchTrack(i); else resetBattle(); return true; }
 
 // shortest learning path (in skill points) from what you own
 function dijkstra() {
@@ -908,6 +917,7 @@ function win() {
     if (s.retry > 0) s.retry--;
     const t = s.retryTarget ?? 0, ready = battleForecast(enemies[t], t).ok;
     if (s.auto && s.retry === 0 && (ready || s.lossStreak < 2 || (s.patience ?? 24) <= 0)) { leavePractice(); s.stage = Math.min(t, s.unlocked); s.patience = 24; log('Practice done. Back to ' + enemies[s.stage][0] + '.'); }
+    else if (s.retry === 0 && !ready && s.lossStreak >= 2 && wallBack()) return;
     else { if (s.retry === 0) s.patience = (s.patience ?? 24) - 1; if (s.retry === 0 && s.patience <= -24 && stuckSwitch()) return; s.practice = (s.practice + 1) % 3; s.practiceEnemy = makePractice(s.track, s.practice); }
     resetBattle(); return;
   }
@@ -982,6 +992,7 @@ function onDefeat() {
   s.retryTarget = target; s.patience = 24;
   const wins = Math.min(24, 3 * Math.pow(2, Math.min(3, s.lossStreak - 1)));
   const j = farmStage(s.track, target);
+  if (j < 0 && s.lossStreak >= 2 && wallBack()) return;
   if (j < 0) {
     s.practice = 2; s.practiceEnemy = makePractice(s.track, 2); s.retry = wins;
     log('Overwhelmed by ' + enemies[target][0] + '. Warming up on ' + s.practiceEnemy[0] + '.');
@@ -1425,7 +1436,7 @@ function renderHUD() {
 let abilRefs = [];
 function renderBattle() {
   const e = curEnemy(), p = progress(), last = enemies.length - 1, prac = s.practice != null;
-  $('trackLabel').textContent = `${s.track ? careers[s.track][0] : 'Everyday Life'} · ${prac ? 'Practice' : 'Stage ' + (s.stage + 1) + ' of ' + enemies.length}`;
+  $('trackLabel').textContent = `${s.track ? careers[s.track][0] : 'Everyday Life'} · ${prac ? 'Warm-up' + (s.retry ? ' · ' + s.retry + ' to go' : '') : 'Stage ' + (s.stage + 1) + ' of ' + enemies.length}`;
   if (changed('stages', [s.track, s.stage, s.unlocked, p.mastered, isGated(s.track, last), prac])) {
     let h = '';
     enemies.forEach((en, j) => {
@@ -1463,7 +1474,8 @@ function renderBattle() {
 function renderNudge() {
   const g = nextGoal(), spend = s.lp > 0 && nodes.some(n => available(n) && s.lp >= n.cost), sg = suggestNext(), p = progress();
   let h = '';
-  if (s.practice != null) h = `<div class="nudge teal">${icon('target', 28)}<div class="txt"><b>Warming up for ${esc(enemies[s.retryTarget ?? 0][0])}</b><small>${s.retry ? s.retry + ' practice win' + (s.retry === 1 ? '' : 's') + ' to go' : s.auto ? 'Waiting until you are strong enough' : 'Auto advance is off'} · spend points to speed this up</small></div><button class="btn small" data-act="retryNow">Retry now</button></div>`;
+  if (s.practice != null && s.unlocked === 0 && s.track && s.prevCareer != null && s.prevCareer !== s.track && careers[s.prevCareer]) h = `<div class="nudge teal">${icon('target', 28)}<div class="txt"><b>${esc(careers[s.track][0])} is a stretch right now</b><small>Warm-ups don't count as stages. Grow stronger in ${esc(s.prevCareer ? careers[s.prevCareer][0] : 'Everyday Life')} and come back${s.autoNext ? ' (auto-switches back after a few losses)' : ''}.</small></div><button class="btn primary small" data-act="work" data-arg="${s.prevCareer}">Go back</button></div>`;
+  else if (s.practice != null) h = `<div class="nudge teal">${icon('target', 28)}<div class="txt"><b>Warming up for ${esc(enemies[s.retryTarget ?? 0][0])}</b><small>${s.retry ? s.retry + ' practice win' + (s.retry === 1 ? '' : 's') + ' to go' : s.auto ? 'Waiting until you are strong enough' : 'Auto advance is off'} · spend points to speed this up</small></div><button class="btn small" data-act="retryNow">Retry now</button></div>`;
   else if (s.sp > 0 && s.owned.length > 1) h = `<div class="nudge teal">${icon('up', 28)}<div class="txt"><b>${s.sp} stat point${s.sp === 1 ? '' : 's'} to spend</b><small>Boost Drive, Resilience, Grit or Luck</small></div><button class="btn primary small" data-act="nav" data-arg="you">Open You</button></div>`;
   else if (s.retryTarget != null && s.stage < s.retryTarget) h = `<div class="nudge teal">${icon('repeat', 28)}<div class="txt"><b>Training for ${esc(enemies[s.retryTarget][0])}</b><small>${s.retry ? s.retry + ' win' + (s.retry === 1 ? '' : 's') + ' to go' : 'Waiting until your build is strong enough'}${s.lossStreak > 1 ? ' · lost ' + s.lossStreak + ' times in a row' : ''}</small></div><button class="btn small" data-act="retryNow">Retry now</button></div>`;
   else if (s.owned.length === 1) h = `<div class="nudge">${lpIcon(30)}<div class="txt"><b>Spend your first skill points</b><small>Learn skills on the Grid to unlock a career</small></div><button class="btn primary small" data-act="nav" data-arg="grid">Open grid</button></div>`;
@@ -1660,6 +1672,7 @@ function careerCard(i) {
   const pills = [];
   if (s.career === i) pills.push('<span class="chip small" style="background:var(--teal);color:#fff">Your job</span>');
   if (p.mastered) pills.push('<span class="chip small gold">Mastered</span>');
+  else if (i && s.career !== i && !careerReady(i)) pills.push('<span class="chip small">Too tough yet</span>');
   else if ((p.unlocked || 0) === last && i) pills.push(`<span class="chip small ${isGated(i, last) ? '' : 'coral'}">${isGated(i, last) ? 'Boss locked' : 'Boss ready'}</span>`);
   const segs = E.map((e, j) => `<i class="${p.mastered || j < (p.unlocked || 0) ? (j === last ? 'boss' : 'on') : ''}"></i>`).join('');
   const meta = i ? `${rankNames[careerRank(i)]} · $${careerPay(i).toFixed(1)}/min · +${c[4]} impact · ${tierNames[careerTier(i)]}` : `Job: Figuring It Out · ${p.mastered ? 'mastered' : (p.unlocked || 0) + '/' + E.length + ' stages'}`;
@@ -1846,6 +1859,9 @@ function showDiscovery() {
   $('discoveryTitle').textContent = c[0];
   $('discoveryFact').textContent = jokes[i] || 'Another perfectly reasonable life choice.';
   $('discoveryReward').textContent = `$${c[2]}/min · +${c[4]} impact · ${tierNames[careerTier(i)]} track · mastery perk ${careerPerk(i)[2]}`;
+  const ready = careerReady(i), first = trackEnemies(i)[0][0];
+  $('discoveryWarn').hidden = ready; $('discoveryWarn').textContent = ready ? '' : `Heads-up: ${first} would overwhelm you right now. Keep growing in ${s.career ? careers[s.career][0] : 'Everyday Life'} and switch once your build catches up. The Careers screen shows when it's ready.`;
+  $('discoveryKeepBtn').className = 'btn' + (ready ? '' : ' primary'); $('discoverySwitchBtn').className = 'btn' + (ready ? ' primary' : ''); $('discoverySwitchBtn').textContent = ready ? 'Start this career' : 'Start anyway';
   if (!$('discovery').open) $('discovery').showModal();
 }
 function closeDiscovery(change) {
