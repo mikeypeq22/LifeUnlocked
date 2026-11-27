@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F6F1E6">
-<title>Life, Unlocked • v0.15</title>
+<title>Life, Unlocked • v0.15.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -362,6 +362,25 @@ dialog::backdrop{background:#1F474466}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+.helpbtn{width:32px;min-width:32px;justify-content:center;font-weight:800;font-size:15px;padding:0;cursor:pointer;border:0}
+.tipcard{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;width:min(400px,calc(100vw - 24px));background:#FFFDF8;border-radius:20px;box-shadow:0 14px 40px #1F474440;padding:14px 16px;animation:tipIn .35s cubic-bezier(.2,1.4,.4,1);border:2px solid #CFE3DD}
+.tipcard[hidden]{display:none}
+.tipcard .th{display:flex;gap:10px;align-items:center;margin-bottom:6px}.tipcard .th b{font:600 17px var(--display);flex:1}
+.tipcard ul{margin:0 0 10px;padding-left:18px;display:grid;gap:5px;font-size:14px;color:var(--ink2);font-weight:600}
+.tipcard .row{justify-content:space-between}
+@keyframes tipIn{from{transform:translate(-50%,16px);opacity:0}}
+@media (min-width:980px){.tipcard{left:auto;right:24px;bottom:24px;transform:none}@keyframes tipIn{from{transform:translateY(16px);opacity:0}}}
+#coachSpot{position:fixed;z-index:80;border-radius:16px;box-shadow:0 0 0 4px #E9A23B,0 0 0 9999px rgba(20,44,42,.5);pointer-events:none;transition:left .25s,top .25s,width .25s,height .25s}
+#coachSpot[hidden]{display:none}
+#coachSpot.none{box-shadow:0 0 0 9999px rgba(20,44,42,.5);width:0!important;height:0!important}
+.coach{position:fixed;z-index:81;width:min(340px,calc(100vw - 24px));background:#FFFDF8;border-radius:20px;padding:14px 16px 12px;box-shadow:0 18px 50px #1F474466;transition:left .25s,top .25s}
+.coach[hidden]{display:none}
+.coach .ch{display:flex;gap:10px;align-items:center;margin-bottom:6px}.coach .ch svg{flex:none}.coach .ch b{display:block;font:600 16px var(--display)}.coach .ch small{color:var(--muted);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.coach p{margin:0 0 10px;font-size:14px;line-height:1.45;color:var(--ink2);font-weight:600}
+.coach .row{justify-content:space-between;align-items:center}
+.coach .skip{background:none;border:0;color:var(--muted);font-weight:800;font-size:13px;cursor:pointer;padding:8px 4px}
+.coach .dots{display:flex;gap:4px}.coach .dots i{width:6px;height:6px;border-radius:3px;background:#E4DCCB}.coach .dots i.on{background:#E9A23B;width:14px}
 </style>
 </head>
 <body>
@@ -370,7 +389,7 @@ dialog::backdrop{background:#1F474466}
     <span class="brand">Life, Unlocked</span>
     <div class="ring" id="lvRing" aria-label="Level"><svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="20" fill="none" stroke="#E4DCCB" stroke-width="5"/><circle id="xpArc" cx="24" cy="24" r="20" fill="none" stroke="#E9A23B" stroke-width="5" stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="125.66" transform="rotate(-90 24 24)"/></svg><b id="lvNum">1</b></div>
     <div class="who"><div class="name" id="whoName">Figuring It Out</div><small id="whoSub"></small></div>
-    <div class="chips"><span class="chip gold" id="lpChip" title="Life Points"></span><span class="chip" id="moneyChip" title="Money"></span></div>
+    <div class="chips"><span class="chip gold" id="lpChip" title="Life Points"></span><span class="chip" id="moneyChip" title="Money"></span><button class="chip helpbtn" id="helpBtn" data-act="help" aria-label="Tips for this screen" title="Tips for this screen">?</button></div>
   </header>
   <nav class="tabs" id="nav" aria-label="Main">
     <button class="tab on" data-act="nav" data-arg="battle" data-screen="battle"><span class="pill" data-icon="battle"></span>Battle</button>
@@ -423,6 +442,9 @@ dialog::backdrop{background:#1F474466}
   </main>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
+<div class="tipcard" id="tipCard" role="status" hidden></div>
+<div id="coachSpot" aria-hidden="true" hidden></div>
+<div class="coach" id="coach" role="dialog" aria-label="Tutorial" hidden></div>
 <div class="trophy" id="trophy" data-act="trophyClose" role="status" aria-live="polite" title="Tap to dismiss" hidden></div>
 <dialog class="sheet" id="sheet"><div class="inner" id="sheetInner"></div></dialog>
 <dialog class="discovery" id="discovery" aria-labelledby="discoveryTitle"><div class="inner">
@@ -694,7 +716,7 @@ const offlineCap = () => (BAL.offlineBase + s.owned.filter(id => nodeById[id]?.o
 
 // ---------------- state ----------------
 const SAVE_KEY = 'lifeUnlocked-v15';
-const fresh = () => ({ xp: 0, level: 1, lp: 3, money: 0, owned: ['origin'], equipped: [], career: 0, stage: 0, unlocked: 0, auto: true, autoNext: true, paused: false, gear: [], home: 0, inventory: {}, parts: 0, wins: 0, track: 0, progress: {}, retry: 0, last: Date.now(), discovered: [], rooms: [], furniture: {}, decor: {}, furnitureFinds: 0, pets: {}, activePet: null, businesses: {}, collectedGear: [], collectedFurniture: [], achievements: [], presets: [null, null, null], gearLv: {}, goalCareer: 0, training: { p: 0, h: 0, d: 0 }, retryTarget: null, lossStreak: 0, patience: 24, look: { skin: 1, hair: 0, hairColor: 0, outfit: -1 }, sp: 0, attr: { drive: 0, resil: 0, grit: 0, luck: 0 }, practice: null, practiceEnemy: null, stats: { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: 0, look: 0, awayStages: 0 }, playTime: 0, history: [], lifeSeen: null, version: 15 });
+const fresh = () => ({ xp: 0, level: 1, lp: 3, money: 0, owned: ['origin'], equipped: [], career: 0, stage: 0, unlocked: 0, auto: true, autoNext: true, paused: false, gear: [], home: 0, inventory: {}, parts: 0, wins: 0, track: 0, progress: {}, retry: 0, last: Date.now(), discovered: [], rooms: [], furniture: {}, decor: {}, furnitureFinds: 0, pets: {}, activePet: null, businesses: {}, collectedGear: [], collectedFurniture: [], achievements: [], presets: [null, null, null], gearLv: {}, goalCareer: 0, training: { p: 0, h: 0, d: 0 }, retryTarget: null, lossStreak: 0, patience: 24, look: { skin: 1, hair: 0, hairColor: 0, outfit: -1 }, sp: 0, attr: { drive: 0, resil: 0, grit: 0, luck: 0 }, practice: null, practiceEnemy: null, stats: { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: 0, look: 0, awayStages: 0 }, playTime: 0, history: [], lifeSeen: null, tut: 0, tipsSeen: [], version: 15 });
 let s = fresh();
 try {
   const keys = [SAVE_KEY, 'lifeUnlocked-v13', 'lifeUnlocked-v12', 'lifeUnlocked-v11', 'lifeUnlocked-v10', 'lifeUnlocked-v09', 'lifeUnlocked-v08', 'lifeUnlocked-v07', 'lifeUnlocked-v06', 'lifeUnlocked-v05', 'lifeUnlocked-v04', 'lifeUnlocked-v03'];
@@ -717,6 +739,7 @@ function sanitize() {
   s.track = s.career; // battles always follow your current career
   if (s.prevCareer == null) s.prevCareer = 0;
   s.stats = { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: Math.floor(s.money || 0), look: 0, awayStages: 0, ...(s.stats || {}) };
+  if (s.tut === undefined || s.tut === null) s.tut = s.owned.length > 1 || s.level > 1 ? -1 : 0; if (!Array.isArray(s.tipsSeen)) s.tipsSeen = [];
   s.playTime ||= 0; if (!Array.isArray(s.history)) s.history = []; if (!Array.isArray(s.lifeSeen)) s.lifeSeen = Object.keys(LIFE_UNLOCKS).filter(k => LIFE_UNLOCKS[k][2](s));
   s.achievements = s.achievements.filter(n => achievements.some(a => a[0] === n));
   if (s.seenDisc === undefined) s.seenDisc = s.discovered.filter(i => i > 0).length;
@@ -1408,13 +1431,13 @@ function playStatsText() {
   const hrs = x => (x / 3600).toFixed(2) + ' h';
   const ms = s.history.filter(x => x.k.startsWith('mastery')).map(x => `${hrs(x.t)}  lv ${x.lv}  ${x.mc} mastered  (${careers[+x.k.split(':')[1]]?.[0] || 'Everyday Life'})`);
   const tl = s.history.filter(x => x.k === 'tick').filter((x, i, a) => i % Math.max(1, Math.ceil(a.length / 24)) === 0).map(x => `${hrs(x.t)}  lv ${x.lv}  ${x.mc} mastered  ${x.disc} discovered  ${x.sk} skills`);
-  return [`Life, Unlocked v0.15 play stats`, `Played: ${hrs(s.playTime)} (plus time away)`, `Level ${s.level} · ${masteredCount()} of ${careers.length - 1} careers mastered · ${s.discovered.filter(i => i > 0).length} discovered · ${skillCount()} skills · ${s.achievements.length} achievements`, `Wins ${fmt(s.wins)} · defeats ${s.stats.defeats} · stages cleared while away ${s.stats.awayStages}`, `Current job: ${careers[s.career][0]}`, '', 'Masteries:', ...(ms.length ? ms : ['(none yet)']), '', 'Timeline:', ...(tl.length ? tl : ['(play 10 minutes for a timeline)'])].join('\n');
+  return [`Life, Unlocked v0.15.1 play stats`, `Played: ${hrs(s.playTime)} (plus time away)`, `Level ${s.level} · ${masteredCount()} of ${careers.length - 1} careers mastered · ${s.discovered.filter(i => i > 0).length} discovered · ${skillCount()} skills · ${s.achievements.length} achievements`, `Wins ${fmt(s.wins)} · defeats ${s.stats.defeats} · stages cleared while away ${s.stats.awayStages}`, `Current job: ${careers[s.career][0]}`, '', 'Masteries:', ...(ms.length ? ms : ['(none yet)']), '', 'Timeline:', ...(tl.length ? tl : ['(play 10 minutes for a timeline)'])].join('\n');
 }
 let awayReport = null, showPath = false, youView = 'points', ngArmed = false, ngTimer = null;
 function copyOut(text, ok, fallbackId) { const done = () => notice(ok), fail = () => { const t = $(fallbackId); if (t) { t.value = text; t.select(); } notice('Copy was blocked. The text is selected: press Ctrl+C or Cmd+C.'); }; try { navigator.clipboard ? navigator.clipboard.writeText(text).then(done, fail) : fail(); } catch { fail(); } }
 function resetGame() {
   s = fresh(); s.prevCareer = 0; s.lifeSeen = []; discoveryQueue = []; currentDiscovery = null; trophyQueue = []; clearTimeout(trophyTimer); trophyTimer = null; $('trophy').hidden = true;
-  showPath = false; youView = 'points'; lifeView = 'home'; careerFilter = 'all';
+  showPath = false; youView = 'points'; lifeView = 'home'; careerFilter = 'all'; hideTip();
   setTrack(0); selected = 'origin'; resetBattle(); logs = []; closeSheet();
   for (const k in sig) delete sig[k]; goalCache.key = ''; if (MAP.nodes) Object.values(MAP.nodes).forEach(r => r.cls = ''); MAP.edges.forEach(e => e.cls = '');
   log('Congratulations, you exist.'); notice('New game started. Welcome to the world!'); setScreen('battle'); renderAll(); save();
@@ -1431,6 +1454,69 @@ function keepScroll(el, fn) { const top = el.scrollTop; fn(); el.scrollTop = top
 // ---------------- toast ----------------
 let toastTimer;
 function notice(t) { const el = $('toast'); if (!el) return; el.textContent = t; el.hidden = false; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; clearTimeout(toastTimer); toastTimer = setTimeout(() => el.hidden = true, 3600); }
+
+
+// ---------------- v0.15.1: first-run tutorial (Rocky the Support Rock) and first-visit tips ----------------
+const TIPS = {
+  battle: ['Battle', ['Fights run by themselves. Your abilities fire whenever they are ready.', 'Tap a stage dot to replay an earlier obstacle, for example to farm XP.', '"Switch job" changes which career\'s obstacles you face.']],
+  grid: ['Life Grid', ['Every skill costs skill points (the gold diamonds). You can learn skills next to ones you already have.', 'Symbols: ★ ability · ◆ gateway · % perk · + stat boost.', 'Tap the Next career bar to light up a path, or use search to find any skill.']],
+  careers: ['Careers', ['Each career needs certain skills. It has 6 stages, and the last one is a boss.', 'Beat the boss to master it: bonus skill points plus a permanent perk.', '"Not ready yet" cards tell you exactly what you\'re missing.']],
+  you: ['You', ['You get a stat point every level. Drive adds impact, Resilience composure, Grit resistance and Luck critical hits.', 'Resetting your stat points is free, so experiment.', 'Sources shows where every stat comes from. Gear and Look are here too.']],
+  'you:sources': ['Where your stats come from', ['Every row adds to your three core stats.', 'Perks and training multiply the total, so they get better as you grow.']],
+  'you:gear': ['Gear', ['Gear drops in battle. Equip one item per slot.', 'Salvage spares for parts, and upgrade favourites: +20% per level.', 'Buy or craft more in the Shop on the Life tab.']],
+  'you:look': ['Your look', ['Purely cosmetic, purely fabulous.', '"Match career" makes your outfit follow your job.']],
+  life: ['Your life', ['Your home, companions, businesses and training unlock as you grow.', 'Rooms and furniture give permanent stats, so they are worth the money.', 'Spare cash? This is where it goes.']],
+  'life:shop': ['Shop', ['Buy gear with money, or craft it with parts from salvaged items.', 'Rarer gear has bigger stats. Legendary items drop from bosses.']],
+  'life:pets': ['Companions', ['Only your active companion helps in battle, but every rank makes it stronger.', 'Some companions need a skill from the Grid first.']],
+  'life:business': ['Businesses', ['Master a career to open its business.', 'Businesses earn money every minute, even while you are away.']],
+  'life:training': ['Training', ['Each course is a permanent percentage boost.', 'Prices rise 20% per course, so this is where late-game money goes.']],
+  journal: ['Journal', ['Achievements give +1 skill point each, and locked ones show your progress.', 'Settings has save, export, feedback, play stats, Replay tutorial and Start over.', '"How to play" has all the rules in one place.']]};
+let tipKeyShown = null;
+const tipKey = () => screen === 'life' ? (lifeView === 'home' ? 'life' : 'life:' + lifeView) : screen === 'you' ? (youView === 'points' ? 'you' : 'you:' + youView) : screen;
+function showTip(key) {
+  const t = TIPS[key]; if (!t) return; tipKeyShown = key; if (!s.tipsSeen.includes(key)) s.tipsSeen.push(key);
+  $('tipCard').innerHTML = `<div class="th"><span class="tile" style="width:34px;height:34px;background:var(--mint)">${icon('sparkle', 18, '#2F6F68')}</span><b>Tip · ${esc(t[0])}</b></div><ul>${t[1].map(x => `<li>${esc(x)}</li>`).join('')}</ul><div class="row"><small class="muted" style="font-weight:700">Tap <b>?</b> at the top any time to see this again.</small><button class="btn small primary" data-act="tipClose">Got it</button></div>`;
+  $('tipCard').hidden = false;
+}
+function hideTip() { $('tipCard').hidden = true; tipKeyShown = null; }
+function maybeTip() { const k = tipKey(); if (tutActive() || s.tipsSeen.includes(k) || !TIPS[k]) { if (tipKeyShown && tipKeyShown !== k) hideTip(); return; } showTip(k); }
+
+const tutActive = () => s.tut >= 0;
+const visibleEl = el => { if (!el) return null; const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight ? el : null; };
+const TUT = [
+  { target: () => $('scene'), title: 'Hi! I\'m Rocky, your Support Rock.', text: () => 'Life is a series of obstacles, and you fight them automatically. Seriously, just watch. You\'re doing great already.', btn: 'Nice to meet you' },
+  { target: () => document.querySelector('.scene .bars'), title: 'Two bars, one lesson', text: () => 'Green is your Composure. Red is the obstacle\'s. Empty theirs to win XP and money. If yours empties, you step back and practice. No judgment. Okay, a little judgment.', btn: 'Got it' },
+  { target: () => $('lpChip'), title: 'Shiny diamonds!', text: () => `These are skill points, and you have ${s.lp}. Spend them on the Life Grid to learn skills and unlock careers.`, btn: () => isVisible('grid') ? 'Next' : 'Open the Grid', go: () => { if (!isVisible('grid')) setScreen('grid'); }, done: () => screen === 'grid' },
+  { target: () => $('goal'), title: 'Follow the glow', text: () => 'This bar shows your nearest career. Tap it to light up the path there.', done: () => showPath || skillCount() >= 2 },
+  { target: () => document.querySelector('#nodeSheet [data-act="learn"]:not([disabled])') || $('nodeSheet'), title: 'Learn something!', text: () => s.lp > 0 ? 'Tap Learn on the glowing skill, and keep going along the path until a career unlocks.' : 'Out of skill points! Go win a few battles. New stages and levels give more.', done: () => s.discovered.some(i => i > 0) },
+  { target: () => visibleEl(document.querySelector('#nav [data-screen="careers"]')), title: 'You found a career!', text: () => 'Careers pay more and have their own obstacles. Open Careers to see when you\'re strong enough to start one.', btn: 'Next', done: () => screen === 'careers' },
+  { target: () => visibleEl(document.querySelector('#nav [data-screen="you"]')), title: 'Level up = stat point', text: () => s.sp > 0 ? `You have ${s.sp} stat point${s.sp === 1 ? '' : 's'}. Open You and put one into Drive for more impact. Yes, Drive. Not Luck. Fine, maybe a little Luck.` : 'Every level gives a stat point. When you get one, put it into Drive on the You tab for more impact.', btn: 'Later', done: () => ATTRS.some(([k]) => s.attr[k] > 0) },
+  { target: () => null, title: 'That\'s the basics!', text: () => 'Battles keep going while you\'re away, and you\'ll get a Welcome back report. Tips pop up the first time you open each tab, and the ? at the top brings them back. Go live your best life. I\'ll be here. Being a rock.', btn: 'Let\'s go!' }];
+function tutAdvance() { s.tut++; if (s.tut >= TUT.length) { s.tut = -1; ['battle', 'grid'].forEach(k => s.tipsSeen.includes(k) || s.tipsSeen.push(k)); } renderCoach(); save(); }
+function renderCoach() {
+  const c = $('coach'), spot = $('coachSpot');
+  if (!tutActive() || sheetKind || $('discovery').open) { c.hidden = true; spot.hidden = true; return; }
+  const st = TUT[s.tut]; if (!st) { s.tut = -1; c.hidden = spot.hidden = true; return; }
+  if (st.done && st.done()) { tutAdvance(); return; }
+  hideTip();
+  const btn = typeof st.btn === 'function' ? st.btn() : st.btn;
+  const html = `<div class="ch">${petArt(0).replace('width="65" height="65"', 'width="44" height="44"')}<div><small>Tutorial · ${s.tut + 1} of ${TUT.length}</small><b>${esc(st.title)}</b></div></div><p>${esc(st.text())}</p><div class="row"><button class="skip" data-act="tutSkip">Skip tutorial</button>${btn ? `<button class="btn small primary" data-act="tutNext">${esc(btn)}</button>` : '<span class="dots">' + TUT.map((_, i) => `<i class="${i === s.tut ? 'on' : ''}"></i>`).join('') + '</span>'}</div>`;
+  if (c.dataset.html !== html) { c.innerHTML = html; c.dataset.html = html; }
+  c.hidden = false; spot.hidden = false; placeCoach();
+}
+function placeCoach() {
+  if (!tutActive()) return;
+  const c = $('coach'), spot = $('coachSpot'), st = TUT[s.tut]; if (!st || c.hidden) return;
+  const el = visibleEl(st.target && st.target()), W = innerWidth, H = innerHeight, cw = c.offsetWidth, ch = c.offsetHeight;
+  if (!el) { spot.className = 'none'; spot.style.left = W / 2 + 'px'; spot.style.top = H / 2 + 'px'; c.style.left = Math.max(12, (W - cw) / 2) + 'px'; c.style.top = Math.max(12, (H - ch) / 2) + 'px'; return; }
+  const r = el.getBoundingClientRect(), pad = 6; spot.className = '';
+  Object.assign(spot.style, { left: r.left - pad + 'px', top: r.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+  const below = r.bottom + pad + 12, above = r.top - pad - 12 - ch;
+  const top = below + ch < H - 8 ? below : above > 8 ? above : Math.max(8, Math.min(H - ch - 8, (H - ch) / 2));
+  c.style.top = top + 'px'; c.style.left = Math.max(12, Math.min(W - cw - 12, r.left + r.width / 2 - cw / 2)) + 'px';
+}
+(function coachLoop() { if (tutActive()) placeCoach(); requestAnimationFrame(coachLoop); })();
+addEventListener('resize', placeCoach);
 
 // ---------------- trophy popup: one celebration per achievement, queued; bursts collapse into one card ----------------
 let trophyQueue = [], trophyTimer = null;
@@ -1905,9 +1991,9 @@ function renderJournal() {
   <section class="card" style="display:grid;gap:10px">
    <label class="spread" style="font-weight:700;font-size:14px;min-height:44px"><span>Auto-switch careers after a mastery or when stuck</span><input type="checkbox" data-act="autoNext" ${s.autoNext ? 'checked' : ''} style="width:22px;height:22px;accent-color:#2F6F68"></label>
    <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="save">${icon('save', 16)}Save now</button><button class="btn small" data-act="export">${icon('download', 16)}Export</button><button class="btn small" data-act="copySave">${icon('save', 16)}Copy save</button><button class="btn small" data-act="import">${icon('upload', 16)}Import</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
-   <small class="muted">${esc(saveStatus)} · stored in this browser · v0.15</small>
+   <small class="muted">${esc(saveStatus)} · stored in this browser · v0.15.1</small>
    <div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px"><b style="font-size:14px">Cloud save</b><small class="muted">${esc(cloud.status)}</small>${!cloud.on ? '' : cloud.user ? `<div class="row" style="flex-wrap:wrap"><button class="btn small primary" data-act="cloudPush">${icon('upload', 16)}Save to cloud now</button><button class="btn small ghost" data-act="cloudSignOut">Sign out</button></div>` : cloud.ready ? `<button class="btn small primary" style="justify-self:start" data-act="cloudSignIn">Sign in with Google</button>` : ''}</div>
-   <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="feedback">${icon('chat', 16)}Send feedback</button><button class="btn small" data-act="playStats">${icon('chart', 16)}Play stats</button></div>
+   <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="feedback">${icon('chat', 16)}Send feedback</button><button class="btn small" data-act="playStats">${icon('chart', 16)}Play stats</button><button class="btn small" data-act="tutReplay">${icon('repeat', 16)}Replay tutorial</button></div>
    <button class="btn small" style="color:#9A3412;justify-self:start" data-act="newgameSheet">Start a new game…</button>
   </section><div style="height:12px"></div>`);
 }
@@ -1984,6 +2070,7 @@ function setScreen(name) {
   if (name === 'life') lifeView = 'home';
   renderScreens(true);
   if (isVisible('grid')) requestAnimationFrame(applyView);
+  maybeTip(); renderCoach();
   const scr = $('scr-' + name); if (scr && name !== 'grid' && name !== 'battle') scr.scrollTop = 0;
   renderHUD();
 }
@@ -1998,7 +2085,7 @@ function renderScreens(force) {
 }
 function renderAll() {
   checkDiscoveries(); recordJournal();
-  renderHUD(); renderBattle(); hudTick(); renderScreens(); renderSheet();
+  renderHUD(); renderBattle(); hudTick(); renderScreens(); renderSheet(); renderCoach();
   dirty = false;
 }
 
@@ -2030,8 +2117,13 @@ const ACT = {
   learn: () => learnSelected(),
   showPath: a => { s.goalCareer = +a; goalCache.key = ''; showPath = true; setScreen('grid'); const g = nextGoal(); if (g && g.first) selectNode(g.first, true); },
   careerFilter: a => { careerFilter = a; },
-  life: a => { if (({ pets: 'pets', business: 'business', training: 'training' })[a] && !lifeOpen(a)) return; if (a === 'gear' || a === 'look') { youView = a === 'gear' ? 'gear' : 'look'; setScreen('you'); return; } lifeView = a; $('scr-life').scrollTop = 0; delete sig.life; },
-  youTab: a => { youView = a; $('scr-you').scrollTop = 0; },
+  life: a => { if (({ pets: 'pets', business: 'business', training: 'training' })[a] && !lifeOpen(a)) return; if (a === 'gear' || a === 'look') { youView = a === 'gear' ? 'gear' : 'look'; setScreen('you'); return; } lifeView = a; $('scr-life').scrollTop = 0; delete sig.life; setTimeout(maybeTip, 0); },
+  youTab: a => { youView = a; $('scr-you').scrollTop = 0; setTimeout(maybeTip, 0); },
+  help: () => { const k = tipKey(); if (tipKeyShown === k) hideTip(); else showTip(TIPS[k] ? k : screen); },
+  tipClose: () => hideTip(),
+  tutNext: () => { const at = s.tut, st = TUT[at]; if (st && st.go) st.go(); if (s.tut === at) tutAdvance(); },
+  tutSkip: () => { s.tut = -1; ['battle', 'grid'].forEach(k => s.tipsSeen.includes(k) || s.tipsSeen.push(k)); renderCoach(); notice('Tutorial skipped. Tap ? at the top for tips on any screen.'); },
+  tutReplay: () => { s.tut = 0; closeSheet(); setScreen('battle'); renderCoach(); },
   openShop: () => { lifeView = 'shop'; setScreen('life'); lifeView = 'shop'; delete sig.life; },
   startOver: () => { if (!ngArmed) { ngArmed = true; renderSheet(); clearTimeout(ngTimer); ngTimer = setTimeout(() => { ngArmed = false; renderSheet(); }, 5000); return; } ngArmed = false; resetGame(); },
   homeUp: () => { if (!lifeOpen('home')) return; const i = s.home; if (i < 3 && s.money >= homePrices[i]) { s.money -= homePrices[i]; s.home++; notice('Moved to ' + homeNames[s.home] + '!'); } },
@@ -2070,7 +2162,8 @@ document.addEventListener('click', e => {
   if (el.tagName === 'INPUT') return; // handled on change
   e.preventDefault();
   fn(el.dataset.arg, el);
-  if (!['nav', 'trophyClose', 'playStats', 'feedback', 'copyStats', 'copyFeedback', 'zoomIn', 'zoomOut', 'zoomAll', 'region', 'search', 'goal', 'discoveryKeep', 'discoverySwitch', 'closeSheet', 'cloudSignIn', 'cloudSignOut', 'cloudPush', 'cloudUseRemote', 'cloudKeepLocal'].includes(el.dataset.act)) { renderAll(); save(); }
+  if (tutActive()) renderCoach();
+  if (!['nav', 'trophyClose', 'help', 'tipClose', 'playStats', 'feedback', 'copyStats', 'copyFeedback', 'zoomIn', 'zoomOut', 'zoomAll', 'region', 'search', 'goal', 'discoveryKeep', 'discoverySwitch', 'closeSheet', 'cloudSignIn', 'cloudSignOut', 'cloudPush', 'cloudUseRemote', 'cloudKeepLocal'].includes(el.dataset.act)) { renderAll(); save(); }
   else if (el.dataset.act === 'region' || el.dataset.act === 'zoomAll') renderRegions();
 });
 document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('g[role=button][data-act]')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
