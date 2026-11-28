@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F6F1E6">
-<title>Life, Unlocked • v0.16</title>
+<title>Life, Unlocked • v0.17</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -388,6 +388,22 @@ dialog::backdrop{background:#1F474466}
 @keyframes luckyFloat{0%{left:-30%}100%{left:105%}}@keyframes luckyPulse{50%{transform:scale(1.15)}}
 @media (prefers-reduced-motion:reduce){.lucky{animation:none;left:30%}.lucky span{animation:none}}
 .item.gearslot{outline:2px solid #CFE3DD}.emptyslot{border:2px dashed #CFC5B2;background:transparent}
+
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px}.ggrid.eqrow{grid-template-columns:repeat(5,1fr)}
+.gtile{position:relative;aspect-ratio:1;border-radius:16px;border:2px solid #CFC5B2;background:#F4EFE4;display:grid;place-items:center;padding:6px 4px 14px;cursor:pointer;font:inherit}
+.gtile svg{width:62%;height:auto}.gtile.empty{border-style:dashed;background:transparent;cursor:default;color:var(--muted);font-size:11px;font-weight:700}
+.gtile.r1{background:#E4F1E9;border-color:#5E9C7A}.gtile.r2{background:#E3E8F7;border-color:#5873C2}.gtile.r3{background:#FFF1CC;border-color:#E9A23B;box-shadow:0 0 0 2px #F6DC9266}
+.gtile.eq{box-shadow:0 2px 0 #2F6F6833}.gtile.big{width:84px;flex:none;padding:8px}
+.glv{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:10.5px;font-weight:800;color:var(--ink2)}
+.grank{position:absolute;top:3px;right:4px;font-size:10px;font-weight:800;background:#1F4744;color:#fff;border-radius:999px;padding:1px 5px}
+.gslot{position:absolute;top:3px;left:5px;font-size:9.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.gup{position:absolute;top:3px;left:4px;font-size:9px;font-weight:800;background:#2F8F5B;color:#fff;border-radius:999px;padding:1px 5px}
+.gset{position:absolute;bottom:16px;right:5px;width:8px;height:8px;border-radius:50%;background:#E9A23B}
+.rdot{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;color:var(--ink2)}.rdot:before{content:'';width:10px;height:10px;border-radius:3px;border:2px solid #B9AE98;background:#F4EFE4}
+.rdot.r1:before{border-color:#5E9C7A;background:#E4F1E9}.rdot.r2:before{border-color:#5873C2;background:#E3E8F7}.rdot.r3:before{border-color:#E9A23B;background:#FFF1CC}
+.ggrid.ftiles{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+.ftile{position:relative;border-radius:14px;border:2px solid #CFC5B2;background:#FBF8F1;padding:6px;display:grid;gap:2px;cursor:pointer;font:inherit;text-align:center}.ftile svg{width:100%;height:auto}.ftile small{font-size:10.5px;font-weight:800;color:var(--ink2)}
+.ftile.placed{border-color:#2F6F68;background:#E6F2EF}.ftile.unowned{opacity:.6}.ftile.big{cursor:default;max-width:260px;margin:6px auto}
 </style>
 </head>
 <body>
@@ -748,6 +764,44 @@ achievements.forEach(a=>{ if(a[0]==='Legendary Find'){a[1]=s=>((s.stats||{}).leg
 achievements.push(ach('Bookworm','Home & life','Finish 10 research levels in the Library.',s=>Object.values(s.research||{}).reduce((a,b)=>a+b,0),10),
  ach('Fashion Statement','You','Wear a full 4-piece set bonus.',s=>(s.stats||{}).set4||0,1),
  ach('Hired!','Careers','Ace a job interview.',s=>(s.stats||{}).aced||0,1));
+// ---------------- v0.17: 26 more careers (92 total) ----------------
+[
+['Math Teacher','📐',22,['Mathematics','Storytelling'],3,1,'The Show-Your-Work|The Word Problem Train|The Calculator Ban|The Fraction Rebellion|The Parent-Teacher Night|The Final Exam Curve','The Broken Protractor|The Smudged Equation|The Missing Remainder','Has explained when you will use algebra in real life 400 times.','Tutoring Academy'],
+['Personal Trainer','💪',21,['Strength','Coordination'],3,1,'The Skipped Leg Day|The Excuse Marathon|The Wobbly Squat|The Protein Shake Spill|The January Rush|The Beach Season Countdown','The Loose Dumbbell|The Squeaky Bench|The Tangled Jump Rope','Counts reps out loud even when grocery shopping.','Boutique Gym'],
+['Life Coach','🌟',24,['Inspiration','Emotional Support'],3,1,'The Vision Board Glitter|The Five-Year Plan|The Comfort Zone|The Sunday Scaries|The Midlife Question|The Big Leap','The Empty Journal|The Dried-Out Highlighter|The Unread Affirmation','Turns every problem into "a growth opportunity", including flat tires.','Coaching Retreat'],
+['Customer Service Rep','🎧',14,['Respectfully, No','Patience'],2,1,'The Hold Queue|The Manager Request|The Coupon Debate|The Caps Lock Email|The Return Without Receipt|The Black Friday Line','The Frozen Headset|The Dropped Call|The Typo in the Macro','Says "I completely understand" in a tone that means the opposite.','Call Center'],
+['Mattress Tester','😴',15,['Power Nap','Second Wind'],2,1,'The Lumpy Spring|The Too-Firm Prototype|The Squeaky Frame|The Pillow Fort Audit|The Overnight Shift|The Cloud Nine Deluxe','The Crooked Pillow|The Cold Side|The Tag You Cannot Remove','Their performance review is literally a nap.','Sleep Showroom'],
+['Data Entry Clerk','⌨️',16,['Automation','CTRL+Z'],2,1,'The Phantom Duplicate|The Merged Cells|The Date Format War|The Accidental Sort|The Million-Row Sheet|The Quarterly Import','The Sticky Shift Key|The Empty Field|The Rogue Space','Has typed "Lorem ipsum" in their sleep.','Data Services Co.'],
+['Influencer','🤳',20,['Charisma','Creative Spark'],3,1,'The Bad Lighting|The Algorithm Change|The Ratio|The Sponsored Post|The Hater Comment|The Viral Moment','The Cracked Ring Light|The Blurry Selfie|The Low Battery','Has photographed every meal since 2014.','Content House'],
+['Small Talk Consultant','🗣️',13,['Awkward Silence','Imagination'],2,1,'The Weather Again|The Elevator Ride|The Name You Forgot|The Double Goodbye|The Office Party|The Wedding Table of Strangers','The Long Pause|The Mumbled Hello|The Wave at Nobody','Can talk about the weather for 45 minutes without repeating.','Etiquette Institute'],
+['Research Scientist','🔬',42,['Evidence Evaluation','Scientific Literacy'],6,2,'The Null Result|The Rogue Variable|The Lab Freezer Alarm|The Reviewer Number Two|The Retracted Hypothesis|The Nobel Shortlist','The Stuck Pipette Tip|The Fogged Microscope|The Coffee-Stained Notebook','Will not believe anything without three citations, including your name.','Research Institute'],
+['Business Analyst','📊',40,['Systems Analysis','Delegation'],6,2,'The Requirements Ping-Pong|The Unclear KPI|The Stakeholder Swap|The Mystery Spreadsheet|The Gap Analysis|The Board Presentation','The Broken Pivot Table|The Wrong Filter|The Unsaved Slide','Has a flowchart for choosing lunch.','Consulting Group'],
+['Safety Inspector','🦺',34,['Tool Safety','Quality Control'],5,2,'The Missing Guard Rail|The Frayed Cable|The Blocked Exit|The Expired Extinguisher|The Surprise Audit|The Factory Recertification','The Unclipped Badge|The Loose Ladder Rung|The Wet Floor Sign','Wears a hard hat to the grocery store, just in case.','Safety Consultancy'],
+['Marathon Coach','🏃',38,['Endurance Training','Athletic Technique'],5,2,'The Side Stitch|The Wrong Shoes|The Hill Repeat|The Carb Load Panic|The Mile 20 Wall|The Race Day Rain','The Untied Lace|The Lost Earbud|The Blister','Considers 10K a warm-up and brunch a cooldown.','Running Club'],
+['Public Health Worker','🏥',36,['Community Health','Compassion'],5,2,'The Flu Season|The Hand-Washing Holdout|The Rumor Spreader|The Clinic Queue|The Vaccine Clinic Rush|The Outbreak Drill','The Empty Sanitizer|The Smudged Poster|The Missing Clipboard','Has strong opinions about sneezing into elbows.','Community Clinic'],
+['HR Manager','🤝',38,['Teamwork','Conversation'],5,2,'The Reply-All Storm|The Fridge Label War|The Policy Loophole|The Team-Building Trust Fall|The Annual Review|The Holiday Party Incident','The Missing Form|The Lost Badge|The Empty Suggestion Box','Can mediate a stapler dispute with diplomatic precision.','Staffing Agency'],
+['Esports Coach','🎮',54,['Digital Mastery','Athletic Technique'],7,3,'The Lag Spike|The Tilted Player|The Meta Shift|The Patch Notes|The Final Round Choke|The World Championship','The Sticky Key|The Dead Controller|The Missed Ping','Reviews footage of your Monopoly game for strategic errors.','Gaming Academy'],
+['Podcast Host','🎙️',50,['Conversation','Inspiration'],7,3,'The Mic Pop|The Guest Who Rambles|The Dead Air|The Sponsor Read|The Episode 100|The Chart-Topping Interview','The Tangled Cable|The Background Dog|The Forgotten Mute','Says "that is a great question" to every question.','Podcast Network'],
+['Wedding Planner','💍',52,['Teamwork','Creative Spark'],7,3,'The Seating Chart Feud|The Rainy Forecast|The Late Florist|The Cake Collapse|The Runaway Groomsman|The Perfect Day','The Lost Place Card|The Wilted Boutonniere|The Ribbon Tangle','Has an emergency kit with 47 types of safety pins.','Events Company'],
+['Chief Scientist','🧪',76,['Peer Review','Grant Writing'],12,4,'The Funding Freeze|The Rival Lab|The Conference Deadline|The Reproducibility Crisis|The Ethics Board|The Breakthrough Paper','The Rejected Abstract|The Lost Sample|The Slide Typo','Writes grant applications for fun, which concerns everyone.','Science Foundation'],
+['Cloud Architect','☁️',90,['Cloud Infrastructure','Network Design'],13,4,'The Region Outage|The Runaway Bill|The Misconfigured Bucket|The Latency Spike|The Migration Weekend|The Infinite Scale','The Expired Token|The Missing Tag|The Typo in the Config','Explains the cloud using actual clouds.','Cloud Consultancy'],
+['Chief Financial Officer','💼',94,['Corporate Finance','Investment Strategy'],14,4,'The Quarterly Forecast|The Surprise Audit Letter|The Currency Swing|The Budget Freeze|The Investor Call|The Annual Report','The Penny Discrepancy|The Lost Expense Report|The Double-Booked Meeting','Has a favorite decimal place.','Finance Group'],
+['Chief Executive Officer','👔',98,['Executive Leadership','Collaborative Leadership'],14,4,'The All-Hands|The Merger Rumor|The PR Crisis|The Board Revolt|The Product Recall|The IPO Bell','The Overbooked Calendar|The Cold Coffee|The Unread Memo','Has a podcast, a book and a morning routine that starts at 4 A.M.','Holding Company'],
+['Master Watchmaker','⌚',82,['Precision Engineering','Quality Assurance'],12,4,'The Tiny Screw|The Overwound Spring|The Dust Speck|The Magnetized Hairspring|The Grand Complication|The Heirloom Restoration','The Lost Jewel Bearing|The Smudged Crystal|The Bent Hand','Is always exactly on time, which makes everyone else nervous.','Watch Atelier'],
+['Emergency Physician','🩻',92,['Crisis Intervention','Care Coordination'],13,4,'The Triage Board|The Mystery Rash|The Graveyard Shift|The Full Moon Night|The Ambulance Surge|The Miracle Save','The Dead Pager|The Missing Chart|The Cold Stethoscope','Eats lunch standing up, out of habit, even on vacation.','Urgent Care Network'],
+['Animator','✏️',76,['Animation','Illustration Theory'],11,4,'The Frame Drop|The Lip-Sync Slip|The Render Queue|The Off-Model Character|The Director Notes|The Premiere Reel','The Smudged Cel|The Crashed File|The Missing Keyframe','Has drawn the same bouncing ball 10,000 times. Still loves it.','Animation Studio'],
+['Senator','🏛️',90,['Public Policy','Public Facilitation'],13,4,'The Town Hall|The Filibuster|The Polling Dip|The Committee Hearing|The Scandal Rumor|The Landmark Bill','The Lost Talking Points|The Hot Mic|The Wrong Name Tag','Shakes hands with everyone, including mannequins.','Policy Institute'],
+['Activist','✊',70,['Movement Building','Community Building'],11,4,'The Empty Rally|The Permit Denial|The Counter-Protest|The Viral Misquote|The Long March|The Historic Vote','The Soggy Sign|The Lost Megaphone|The Dead Petition Pen','Has organized a group chat into a movement.','Advocacy Network']
+].forEach(([name,emoji,pay,reqs,power,tier,enc,prac,joke,biz])=>{const index=careers.length;careers.push([name,emoji,pay,reqs,power]);careerTierOf[index]=tier;tracks.push(enc.split('|'));PRACTICE_MORE.push(prac.split('|'));jokes.push(joke);businessNames.push(biz);});
+// v0.17: "every career" must count the careers added after the achievement list, plus new achievements
+achievements[achievements.findIndex(a=>a[0]==='The Whole Résumé')]=ach('The Whole Résumé','Careers','Master every career.',mastered_(),careers.length-1);
+achievements.push(
+ach('Overachiever','Careers','Master 60 careers.',mastered_(),60),
+ach('Night Owl','Skills','Take 5 night classes at the Library.',s=>s.courses||0,5),
+ach('Grudge Match','Careers','Win an Expert rematch.',stat_('experts'),1),
+ach('Old Pro','Careers','Reach Expert V in any career.',s=>Math.max(0,...Object.values(s.progress).map(p=>p.erank||0)),5),
+ach('Weekend Warrior','Battles','Finish a weekly challenge.',stat_('weeklies'),1),
+ach('Passing the Torch','You','Retire and start a new generation.',s=>s.legacy?s.legacy.gen-1:0,1));
 
 // ======================================================================
 //  v0.16 systems: gear 2.0, bonuses, research, grid variety, traits,
@@ -776,6 +830,22 @@ const BONUS_TEXT = { speed: 'attack speed', crit: 'crit chance', ability: 'abili
     Object.assign(n, { name: m[2](v), stat: null, value: 0, bonus: [m[0], v], desc: 'Permanent ' + m[2](v).toLowerCase() + '.' });
   }
 })();
+// v0.17: small booster nodes beside every core skill (the inner rings get denser); placed where they fit
+(function addSatellites() {
+  const core = nodes.filter(n => /^\d-\d$/.test(n.id)), all = () => nodes;
+  const free = (x, y) => all().every(m => Math.hypot(m.x - x, m.y - y) >= 46);
+  const kinds = [['power', j => 2 + j, v => '+' + v + ' Impact', v => '+' + v + ' basic impact'], ['hp', j => 14 + 6 * j, v => '+' + v + ' Composure', v => '+' + v + ' maximum composure'], ['def', j => 1 + Math.floor(j / 2), v => '+' + v + ' Resistance', v => '+' + v + ' resistance']];
+  for (const n of core) {
+    const par = nodeById0(n.req[0]); if (!par) continue;
+    const dx = n.x - par.x, dy = n.y - par.y, L = Math.hypot(dx, dy) || 1, px = -dy / L, py = dx / L;
+    let spot = null;
+    for (const d of [44, -44, 52, -52, 60, -60]) { const x = Math.round(n.x + px * d + dx / L * 8), y = Math.round(n.y + py * d + dy / L * 8); if (free(x, y)) { spot = [x, y]; break; } }
+    if (!spot) continue;
+    const j = +n.id.split('-')[1], d = +n.id.split('-')[0], k = kinds[(d + j) % 3], v = k[1](j);
+    nodes.push({ id: 'sat-' + n.id, name: k[2](v), x: spot[0], y: spot[1], c: n.c, d: n.d, cost: 1, req: [n.id], ability: null, stat: k[0], value: v, desc: k[3](v) + '. A small booster next to ' + n.name + '.', sat: true });
+  }
+  function nodeById0(id) { return nodes.find(m => m.id === id); }
+})();
 let gridBonusCache = { key: '', v: {} };
 function gridBonus() {
   const key = s.owned.length + ':' + s.owned[s.owned.length - 1]; if (gridBonusCache.key === key) return gridBonusCache.v;
@@ -788,7 +858,7 @@ const researchLevel = k => (s.research && s.research[k]) || 0;
 const research = bonusKey => RESEARCH.reduce((v, r) => r[2] === bonusKey ? v + researchLevel(r[0]) * r[3] : v, 0);
 const researchCost = k => Math.round(BAL.resCost * Math.pow(BAL.resCostG, researchLevel(k)));
 const researchTime = k => Math.round(BAL.resTime * Math.pow(BAL.resTimeG, researchLevel(k)) / researchSpeed());
-const researchSpeed = () => 1 + .1 * placedIn(3).length + (owned(byName['Research Methods']) ? .15 : 0) + (owned(byName['Accelerated Learning']) ? .15 : 0);
+const researchSpeed = () => 1 + legacyBonus('research') + .1 * placedIn(3).length + (owned(byName['Research Methods']) ? .15 : 0) + (owned(byName['Accelerated Learning']) ? .15 : 0);
 const researchSlots = () => 1 + Math.round(bonus('rslots'));
 const libraryOpen = () => s.rooms.includes(3);
 function startResearch(k) {
@@ -815,7 +885,7 @@ const itemScore = it => { const x = itemStats(it); return x.p / 2 + x.h / 12 + x
 const itemSet = it => items[it.b][7] ?? null;
 const bagItem = u => s.bag.find(it => it.u === u);
 const equippedItems = () => gearSlots.map(sl => bagItem(s.equip[sl])).filter(Boolean);
-function rankCost(it) { const k = it.k + 1; return { parts: Math.ceil(k * 3 * RAR_PARTS[it.r] * (1 + it.l / 25)), money: Math.round(20 * Math.pow(k, 1.6) * (1 + it.l / 4)) }; }
+function rankCost(it) { const k = it.k + 1; return { parts: Math.ceil(k * 3 * RAR_PARTS[it.r] * (1 + it.l / 25)), money: Math.round(50 * Math.pow(k, 1.7) * (1 + it.l / 3) * RAR_PARTS[it.r] ** .5) }; }
 const salvageValue = it => Math.ceil((1 + it.l / 10) * RAR_PARTS[it.r] * (1 + it.k * .5) * (1 + bonus('parts')));
 function rollRarity(boss) {
   const luck = attrEff(s.attr.luck) * .0012 + bonus('loot'), x = Math.random();
@@ -838,9 +908,10 @@ function tidyBag() {
 }
 function dropItem(boss) { const r = rollRarity(boss), it = makeItem(pickBase(r), s.level + (boss ? 2 : 0) - Math.floor(Math.random() * 3), r); addItem(it); return it; }
 function equipBestGear() { for (const sl of gearSlots) { let best = bagItem(s.equip[sl]); for (const it of s.bag) if (items[it.b][5] === sl && (!best || itemScore(it) > itemScore(best))) best = it; gearVer++; if (best) s.equip[sl] = best.u; } }
-function rankUp(u) {
+function rankUp(u, how) {
   const it = bagItem(u); if (!it || it.k >= 10) return false; const c = rankCost(it);
-  if (s.parts < c.parts || s.money < c.money) return false; gearVer++; s.parts -= c.parts; s.money -= c.money; it.k++; s.stats.maxRank = Math.max(s.stats.maxRank || 0, it.k); return true;
+  if (how === 'money') { if (s.money < c.money) return false; s.money -= c.money; } else { if (s.parts < c.parts) return false; s.parts -= c.parts; }
+  gearVer++; it.k++; s.stats.ranks = (s.stats.ranks || 0) + 1; s.stats.maxRank = Math.max(s.stats.maxRank || 0, it.k); return true;
 }
 function salvageItem(u) { const it = bagItem(u); if (!it || Object.values(s.equip).includes(u) || it.lock) return 0; const v = salvageValue(it); gearVer++; s.parts += v; s.bag.splice(s.bag.indexOf(it), 1); return v; }
 const shopPrice = (b, r) => Math.round(items[b][1] * (1 + s.level / 10) * [1, 1.6, 0, 0][r]);
@@ -857,6 +928,7 @@ function bonus(k) {
     for (const it of equippedItems()) for (const [kk, x] of it.a) add(kk, x);
     const sc = setCounts(); for (const si in sc) { const st = GEAR_SETS[si]; if (sc[si] >= 2) add(st[3][0][0], st[3][0][1]); if (sc[si] >= 4) add(st[3][1][0], st[3][1][1]); }
     for (const r of RESEARCH) add(r[2], researchLevel(r[0]) * r[3]);
+    for (const h of HEIRLOOMS) if (h[2] !== 'startLP' && h[2] !== 'research') add(h[2], legacyRank(h[0]) * h[3]);
     bonusMemo = { t: key, v };
   }
   return bonusMemo.v[k] || 0;
@@ -882,6 +954,57 @@ function migrateGear() {
 
 for (const k in abilities) abilities[k].name = k;
 const interviewXP = () => s.ivBuff && s.ivBuff.career === s.track && s.lifeClock < s.ivBuff.until ? s.ivBuff.xp : 0;
+
+// ---------- v0.17: night classes (buy skill points with money) ----------
+const courseCost = () => Math.round(400 * Math.pow(1.2, s.courses || 0));
+function takeCourse() { const c = courseCost(); if (s.money < c) return false; s.money -= c; s.courses = (s.courses || 0) + 1; s.lp++; return true; }
+
+// ---------- v0.17: Expert rematches past mastery (Expert I-V) ----------
+const expertRank = t => (s.progress[t] && s.progress[t].erank) || 0;
+function rematchEnemy(t) { const E = trackEnemies(t), b = E[E.length - 1], r = expertRank(t) + 1; return ['Expert ' + b[0].replace(/^The /, '') + ' ' + RANK_NAMES[r], '', Math.round(b[2] * Math.pow(1.7, r)), Math.round(b[3] * Math.pow(1.25, r) * 10) / 10, Math.round(b[4] * (1 + r)), Math.round(b[5] * (1 + r)), careers[t][0], 'Expert rematch']; }
+
+// ---------- v0.17: The Next Generation (prestige) ----------
+const HEIRLOOMS = [ // [key, name, bonus key, per rank, max, joke]
+  ['spreadsheet', "Grandpa's Spreadsheet", 'money', .06, 10, 'Every cell is a life lesson.'],
+  ['peptalk', "Mom's Pep Talk", 'pPct', .05, 10, '"You can do anything. Also, wear a jacket."'],
+  ['recipe', 'The Family Recipe', 'hpPct', .05, 10, 'Comfort food, scientifically.'],
+  ['sock', 'The Lucky Sock', 'crit', .01, 10, 'Never washed. Never lost.'],
+  ['card', 'Old Library Card', 'research', .08, 10, 'Overdue since 1987.'],
+  ['toolbox', 'Inherited Toolbox', 'parts', .1, 10, 'Contains one of every screw, none matching.'],
+  ['diary', "Dad's Diary of Lessons", 'xp', .06, 10, 'Mostly about lawn care. Still useful.'],
+  ['headstart', 'Head Start', 'startLP', 3, 10, '+3 skill points at the start of each generation.']];
+const legacyRank = k => (s.legacy && s.legacy.perks && s.legacy.perks[k]) || 0;
+const legacyBonus = key => HEIRLOOMS.reduce((v, h) => h[2] === key ? v + legacyRank(h[0]) * h[3] : v, 0);
+const heirloomCost = k => legacyRank(k) + 1;
+const RETIRE_AT = 45;
+function legacyEarned() { return Math.floor(masteredCount() / 3 + s.level / 60 + s.achievements.length / 6); }
+function lifeTitle() {
+  const counts = {}; for (const i in s.progress) if (+i > 0 && s.progress[i].mastered) { const d = careerDiscipline(+i); counts[d] = (counts[d] || 0) + 1; }
+  const d = +Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+  return ['The Bookworm', 'The Techie', 'The Hustler', 'The Tinkerer', 'The Gym Rat', 'The Caretaker', 'The Artist', 'The Social Butterfly', 'The Renaissance Kid', 'The Everyday Hero'][isNaN(d) ? 9 : d];
+}
+function retire() {
+  if (masteredCount() < RETIRE_AT) return false;
+  const keep = { achievements: s.achievements, legacy: s.legacy || { points: 0, perks: {}, gen: 1, album: [] }, tipsSeen: s.tipsSeen, look: s.look, stats: s.stats, weekly: s.weekly, autoNext: s.autoNext };
+  const L = keep.legacy; L.points += legacyEarned(); L.album.push({ gen: L.gen, title: lifeTitle(), level: s.level, mastered: masteredCount(), career: careers[s.career][0], played: Math.round(s.playTime) }); L.gen++;
+  s = fresh(); Object.assign(s, keep); s.tut = -1; s.lifeSeen = []; s.prevCareer = 0; s.lp += legacyBonus('startLP'); s.legacyTotal = L.points;
+  setTrack(0); resetBattle(); return true;
+}
+function buyHeirloom(k) { const h = HEIRLOOMS.find(x => x[0] === k); if (!h || !s.legacy || legacyRank(k) >= h[4] || s.legacy.points < heirloomCost(k)) return false; s.legacy.points -= heirloomCost(k); s.legacy.perks[k] = legacyRank(k) + 1; gearVer++; return true; }
+
+// ---------- v0.17: weekly challenge (resets every Monday) ----------
+const WEEKLY = [ // [title, stat getter, target per level band, reward LP]
+  ['Win 1,500 battles', st => st.wins, 1500], ['Land 400 critical hits', st => st.crits, 400], ['Master 3 careers', st => st.mc, 3],
+  ['Earn $250,000', st => st.earned, 250000], ['Rank up gear 8 times', st => st.ranks, 8], ['Finish 4 research levels', st => st.research, 4],
+  ['Tap 8 Lucky Breaks', st => st.lucky, 8], ['Learn 15 skills', st => st.skills, 15]];
+const weekId = () => Math.floor((Date.now() / 864e5 + 3) / 7);
+function weeklySnap() { return { wins: s.wins, crits: s.stats.crits, mc: masteredCount(), earned: s.stats.earned, ranks: s.stats.ranks || 0, research: Object.values(s.research || {}).reduce((a, b) => a + b, 0), lucky: s.stats.lucky || 0, skills: s.owned.length }; }
+function weeklyState() {
+  const id = weekId(); if (!s.weekly || s.weekly.id !== id) s.weekly = { id, base: weeklySnap(), done: false };
+  const w = WEEKLY[id % WEEKLY.length], now = weeklySnap(), prog = Math.max(0, w[1](now) - w[1](s.weekly.base));
+  return { w, prog, target: w[2], done: s.weekly.done };
+}
+function weeklyCheck() { const st = weeklyState(); if (!st.done && st.prog >= st.target) { s.weekly.done = true; s.lp += 5; s.stats.weeklies = (s.stats.weeklies || 0) + 1; log('Weekly challenge complete! +5 skill points.'); if (typeof notice === 'function') notice('Weekly challenge complete! +5 skill points'); dirty = true; } }
 
 // ======================================================================
 //  v0.10 core: lookups, balance, state, combat
@@ -937,17 +1060,17 @@ const lifeOpen = k => LIFE_UNLOCKS[k][2](s);
 const offlineCap = () => (BAL.offlineBase + s.owned.filter(id => nodeById[id]?.offline).length + bonus('away')) * 3600;
 
 // ---------------- state ----------------
-const SAVE_KEY = 'lifeUnlocked-v16';
-const fresh = () => ({ xp: 0, level: 1, lp: 3, money: 0, owned: ['origin'], equipped: [], career: 0, stage: 0, unlocked: 0, auto: true, autoNext: true, paused: false, gear: [], home: 0, inventory: {}, parts: 0, wins: 0, track: 0, progress: {}, retry: 0, last: Date.now(), discovered: [], rooms: [], furniture: {}, decor: {}, furnitureFinds: 0, pets: {}, activePet: null, businesses: {}, collectedGear: [], collectedFurniture: [], achievements: [], presets: [null, null, null], gearLv: {}, goalCareer: 0, training: { p: 0, h: 0, d: 0 }, retryTarget: null, lossStreak: 0, patience: 24, look: { skin: 1, hair: 0, hairColor: 0, outfit: -1 }, sp: 0, attr: { drive: 0, resil: 0, grit: 0, luck: 0 }, practice: null, practiceEnemy: null, stats: { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: 0, look: 0, awayStages: 0 }, playTime: 0, history: [], lifeSeen: null, tut: 0, tipsSeen: [], bag: [], equip: {}, research: {}, rActive: [], lifeClock: 0, abilRank: {}, interviewed: [], uid: 0, autoEquip: true, version: 16 });
+const SAVE_KEY = 'lifeUnlocked-v17';
+const fresh = () => ({ xp: 0, level: 1, lp: 3, money: 0, owned: ['origin'], equipped: [], career: 0, stage: 0, unlocked: 0, auto: true, autoNext: true, paused: false, gear: [], home: 0, inventory: {}, parts: 0, wins: 0, track: 0, progress: {}, retry: 0, last: Date.now(), discovered: [], rooms: [], furniture: {}, decor: {}, furnitureFinds: 0, pets: {}, activePet: null, businesses: {}, collectedGear: [], collectedFurniture: [], achievements: [], presets: [null, null, null], gearLv: {}, goalCareer: 0, training: { p: 0, h: 0, d: 0 }, retryTarget: null, lossStreak: 0, patience: 24, look: { skin: 1, hair: 0, hairColor: 0, outfit: -1 }, sp: 0, attr: { drive: 0, resil: 0, grit: 0, luck: 0 }, practice: null, practiceEnemy: null, stats: { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: 0, look: 0, awayStages: 0 }, playTime: 0, history: [], lifeSeen: null, tut: 0, tipsSeen: [], bag: [], equip: {}, research: {}, rActive: [], lifeClock: 0, abilRank: {}, interviewed: [], uid: 0, autoEquip: true, courses: 0, rematch: null, legacy: null, weekly: null, version: 17 });
 let s = fresh();
 try {
-  const keys = [SAVE_KEY, 'lifeUnlocked-v15', 'lifeUnlocked-v13', 'lifeUnlocked-v12', 'lifeUnlocked-v11', 'lifeUnlocked-v10', 'lifeUnlocked-v09', 'lifeUnlocked-v08', 'lifeUnlocked-v07', 'lifeUnlocked-v06', 'lifeUnlocked-v05', 'lifeUnlocked-v04', 'lifeUnlocked-v03'];
+  const keys = [SAVE_KEY, 'lifeUnlocked-v16', 'lifeUnlocked-v15', 'lifeUnlocked-v13', 'lifeUnlocked-v12', 'lifeUnlocked-v11', 'lifeUnlocked-v10', 'lifeUnlocked-v09', 'lifeUnlocked-v08', 'lifeUnlocked-v07', 'lifeUnlocked-v06', 'lifeUnlocked-v05', 'lifeUnlocked-v04', 'lifeUnlocked-v03'];
   let raw = null; for (const k of keys) { const v = localStorage.getItem(k); if (v) { raw = JSON.parse(v); break; } }
   if (raw && Array.isArray(raw.owned) && Array.isArray(raw.equipped) && Array.isArray(raw.gear)) { s = { ...fresh(), ...raw }; migrateStatPoints(raw); }
 } catch { }
 // saves from before v0.12 get a stat point for every level already reached
 function migrateStatPoints(raw) { if (raw && !raw.attr) s.sp = Math.max(0, (raw.level || 1) - 1); }
-function sanitize() {
+function sanitize() { s.version = 17;
   s.owned = s.owned.filter(id => nodeById[id]); if (!s.owned.includes('origin')) s.owned.unshift('origin');
   s.equipped = s.equipped.filter(n => abilities[n]);
   s.gear = s.gear.filter(i => items[i]);
@@ -1197,7 +1320,7 @@ function makePractice(t, k) {
   }
   return e;
 }
-const curEnemy = () => s.practice != null && s.practiceEnemy ? s.practiceEnemy : enemies[s.stage];
+const curEnemy = () => s.rematch != null && s.rematch === s.track ? rematchEnemy(s.track) : s.practice != null && s.practiceEnemy ? s.practiceEnemy : enemies[s.stage];
 const curMechIndex = () => s.practice ?? s.stage;
 function leavePractice() { s.practice = null; s.practiceEnemy = null; }
 
@@ -1210,6 +1333,11 @@ function loot() {
 function furnitureLoot() { if (Math.random() < (s.practice == null && s.stage === enemies.length - 1 ? .09 : .025)) { const pool = furniture.map((f, i) => i).filter(i => i % 2 === 0 || s.stage >= 3); const i = pool[Math.floor(Math.random() * pool.length)]; s.furniture[i] = (s.furniture[i] || 0) + 1; s.furnitureFinds++; log('Furniture found: ' + furniture[i][0]); dirty = true; } }
 function win() {
   const e = curEnemy(), p = progress(); let justMastered = false;
+  if (s.rematch != null && s.rematch === s.track) {
+    s.wins++; p.wins = (p.wins || 0) + 1; loot(); loot(); gainXP(e[4]); s.money += e[5]; s.stats.earned += e[5];
+    p.erank = expertRank(s.track) + 1; s.lp += 2; s.rematch = null; s.stats.experts = (s.stats.experts || 0) + 1;
+    log('Expert ' + RANK_NAMES[p.erank] + ' in ' + careers[s.track][0] + '! +2 skill points.'); notice('Expert ' + RANK_NAMES[p.erank] + ': ' + careers[s.track][0] + ' · +2 skill points'); resetBattle(); dirty = true; return;
+  }
   s.wins++; p.wins = (p.wins || 0) + 1; loot(); furnitureLoot(); gainXP(e[4]); s.money += e[5]; s.stats.earned += e[5];
   if (hp < stats().h * .1) s.stats.clutch++;
   if (s.practice != null) s.stats.practice++; else if (s.stage === enemies.length - 1) s.stats.bosses++;
@@ -1286,6 +1414,7 @@ function tick() {
 // ---------------- defeats: never get stuck, never leave your career ----------------
 function farmStage(t, below) { const E = trackEnemies(t); for (let j = Math.min(below, E.length) - 1; j >= 0; j--) if (battleForecast(E[j], j).ok) return j; return -1; }
 function onDefeat() {
+  if (s.rematch != null) { s.rematch = null; s.stats.defeats++; log('The Expert rematch was too much. Back to regular work.'); notice('Expert rematch lost. Try again when stronger.'); hp = stats().h; resetBattle(); dirty = true; return; }
   s.stats.defeats++;
   if (s.practice != null) { // even the warm-up was too much: make it gentler
     s.practiceEnemy = makePractice(s.track, s.practice); s.practiceEnemy[2] = Math.max(5, Math.round(s.practiceEnemy[2] * .6)); s.practiceEnemy[3] = Math.round(s.practiceEnemy[3] * 6) / 10;
@@ -1348,6 +1477,7 @@ function logHistory(kind) { s.history.push({ t: Math.round(s.playTime), k: kind,
 // ---------------- discoveries & journal ----------------
 function checkDiscoveries() { careers.forEach((c, i) => { if (i && qualifies(c) && !s.discovered.includes(i)) { s.discovered.push(i); discoveryQueue.push(i); } }); showDiscovery(); }
 function recordJournal() {
+  weeklyCheck();
   for (const k in LIFE_UNLOCKS) if (!s.lifeSeen.includes(k) && lifeOpen(k)) { s.lifeSeen.push(k); dirty = true; if (typeof notice === 'function') notice(LIFE_UNLOCKS[k][0] + ' unlocked! Find it on the Life tab.'); }
   for (const i of Object.keys(s.inventory)) if (s.inventory[i] > 0 && !s.collectedGear.includes(+i)) s.collectedGear.push(+i);
   for (const i of Object.keys(s.furniture)) if (s.furniture[i] > 0 && !s.collectedFurniture.includes(+i)) s.collectedFurniture.push(+i);
@@ -1683,7 +1813,7 @@ function playStatsText() {
   const hrs = x => (x / 3600).toFixed(2) + ' h';
   const ms = s.history.filter(x => x.k.startsWith('mastery')).map(x => `${hrs(x.t)}  lv ${x.lv}  ${x.mc} mastered  (${careers[+x.k.split(':')[1]]?.[0] || 'Everyday Life'})`);
   const tl = s.history.filter(x => x.k === 'tick').filter((x, i, a) => i % Math.max(1, Math.ceil(a.length / 24)) === 0).map(x => `${hrs(x.t)}  lv ${x.lv}  ${x.mc} mastered  ${x.disc} discovered  ${x.sk} skills`);
-  return [`Life, Unlocked v0.16 play stats`, `Played: ${hrs(s.playTime)} (plus time away)`, `Level ${s.level} · ${masteredCount()} of ${careers.length - 1} careers mastered · ${s.discovered.filter(i => i > 0).length} discovered · ${skillCount()} skills · ${s.achievements.length} achievements`, `Wins ${fmt(s.wins)} · defeats ${s.stats.defeats} · stages cleared while away ${s.stats.awayStages}`, `Current job: ${careers[s.career][0]}`, '', 'Masteries:', ...(ms.length ? ms : ['(none yet)']), '', 'Timeline:', ...(tl.length ? tl : ['(play 10 minutes for a timeline)'])].join('\n');
+  return [`Life, Unlocked v0.17 play stats`, `Played: ${hrs(s.playTime)} (plus time away)`, `Level ${s.level} · ${masteredCount()} of ${careers.length - 1} careers mastered · ${s.discovered.filter(i => i > 0).length} discovered · ${skillCount()} skills · ${s.achievements.length} achievements`, `Wins ${fmt(s.wins)} · defeats ${s.stats.defeats} · stages cleared while away ${s.stats.awayStages}`, `Current job: ${careers[s.career][0]}`, '', 'Masteries:', ...(ms.length ? ms : ['(none yet)']), '', 'Timeline:', ...(tl.length ? tl : ['(play 10 minutes for a timeline)'])].join('\n');
 }
 let awayReport = null, showPath = false, youView = 'points', ngArmed = false, ngTimer = null;
 function copyOut(text, ok, fallbackId) { const done = () => notice(ok), fail = () => { const t = $(fallbackId); if (t) { t.value = text; t.select(); } notice('Copy was blocked. The text is selected: press Ctrl+C or Cmd+C.'); }; try { navigator.clipboard ? navigator.clipboard.writeText(text).then(done, fail) : fail(); } catch { fail(); } }
@@ -1712,18 +1842,18 @@ function notice(t) { const el = $('toast'); if (!el) return; el.textContent = t;
 const TIPS = {
   battle: ['Battle', ['Fights run by themselves. Your abilities fire whenever they are ready.', 'Tap a stage dot to replay an earlier obstacle, for example to farm XP.', '"Switch job" changes which career\'s obstacles you face.']],
   grid: ['Life Grid', ['Every skill costs skill points (the gold diamonds). You can learn skills next to ones you already have.', 'Symbols: ★ ability · ◆ gateway · % bonus (speed, crits, XP…) · + stat boost · ⬢ keystone (extra ability or research slot).', 'Tap the Next career bar to light up a path, or use search to find any skill.']],
-  careers: ['Careers', ['Each career needs certain skills. It has 6 stages, and the last one is a boss.', 'Beat the boss to master it: bonus skill points plus a permanent perk.', '"Not ready yet" cards tell you exactly what you\'re missing.']],
+  careers: ['Careers', ['Each career needs certain skills. It has 6 stages, and the last one is a boss.', 'Beat the boss to master it: bonus skill points plus a permanent perk.', 'Mastered careers offer Expert rematches (I to V): a tougher boss for double loot and +2 skill points.', '"Not ready yet" cards tell you exactly what you\'re missing.']],
   you: ['You', ['You get a stat point every level. Drive adds impact, Resilience composure, Grit resistance and Luck critical hits.', 'Resetting your stat points is free, so experiment.', 'Sources shows where every stat comes from. Gear and Look are here too.']],
   'you:sources': ['Where your stats come from', ['Every row adds to your three core stats.', 'Perks and training multiply the total, so they get better as you grow.']],
-  'you:gear': ['Gear', ['Gear drops at your level, so new drops keep up with you. Rare items roll bonus stats.', 'Rank items up with parts and money: +8% per rank, up to Rank X.', 'Wear 2 or 4 pieces of a set for set bonuses. Salvage spares for parts.']],
+  'you:gear': ['Gear', ['Gear drops at your level, so new drops keep up with you. Rare items roll bonus stats.', 'Tap any item for details. Rank it up with parts OR money: +8% per rank, up to Rank X.', 'Colors show rarity (green Uncommon, blue Rare, gold Legendary); the corner numeral is the rank and ▲ marks an upgrade.', 'Wear 2 or 4 pieces of a set for set bonuses. Salvage spares for parts.']],
   'you:look': ['Your look', ['Purely cosmetic, purely fabulous.', '"Match career" makes your outfit follow your job.']],
-  life: ['Your life', ['Your home, companions, businesses and training unlock as you grow.', 'Rooms and furniture give permanent stats, so they are worth the money.', 'Spare cash? This is where it goes.']],
+  life: ['Your life', ['Your home, companions, businesses and training unlock as you grow.', 'Rooms and furniture give permanent stats. Tap a room, then tap a piece to see it, place it, buy it or craft it.', 'Spare cash? This is where it goes.']],
   'life:shop': ['Shop', ['Buy gear with money, or craft it with parts from salvaged items.', 'Rarer gear has bigger stats. Legendary items drop from bosses.']],
   'life:pets': ['Companions', ['Only your active companion helps in battle, but every rank makes it stronger.', 'Some companions need a skill from the Grid first.']],
   'life:business': ['Businesses', ['Master a career to open its business.', 'Businesses earn money every minute, even while you are away.']],
-  'life:research': ['Library', ['Start a project and it runs on its own, even while you are away.', 'Each level is a permanent bonus. Later levels take longer.', 'Library furniture and study skills speed research up. Keystones on the Grid add research slots.']],
+  'life:research': ['Library', ['Start a project and it runs on its own, even while you are away.', 'Each level is a permanent bonus. Later levels take longer.', 'Library furniture and study skills speed research up. Keystones on the Grid add research slots.', 'Night classes sell skill points for money. The price rises 20% each time.']],
   'life:training': ['Training', ['Each course is a permanent percentage boost.', 'Prices rise 20% per course, so this is where late-game money goes.']],
-  journal: ['Journal', ['Achievements give +1 skill point each, and locked ones show your progress.', 'Settings has save, export, feedback, play stats, Replay tutorial and Start over.', '"How to play" has all the rules in one place.']]};
+  journal: ['Journal', ['Achievements give +1 skill point each, and locked ones show your progress.', 'A new weekly challenge starts every Monday and is worth +5 skill points.', 'Master ' + RETIRE_AT + ' careers to retire: your kid starts over with heirlooms that make every generation stronger.', 'Settings has save, export, feedback, play stats, Replay tutorial and Start over.', '"How to play" has all the rules in one place.']]};
 let tipKeyShown = null;
 const tipKey = () => screen === 'life' ? (lifeView === 'home' ? 'life' : 'life:' + lifeView) : screen === 'you' ? (youView === 'points' ? 'you' : 'you:' + youView) : screen;
 function showTip(key) {
@@ -1898,7 +2028,7 @@ function renderHUD() {
 let abilRefs = [];
 function renderBattle() {
   const e = curEnemy(), p = progress(), last = enemies.length - 1, prac = s.practice != null;
-  $('trackLabel').textContent = `${s.track ? careers[s.track][0] : 'Everyday Life'} · ${prac ? 'Warm-up' + (s.retry ? ' · ' + s.retry + ' to go' : '') : 'Stage ' + (s.stage + 1) + ' of ' + enemies.length}`;
+  $('trackLabel').textContent = `${s.track ? careers[s.track][0] : 'Everyday Life'} · ${s.rematch === s.track && s.rematch != null ? 'Expert rematch ' + RANK_NAMES[expertRank(s.track) + 1] : prac ? 'Warm-up' + (s.retry ? ' · ' + s.retry + ' to go' : '') : 'Stage ' + (s.stage + 1) + ' of ' + enemies.length}`;
   if (changed('stages', [s.track, s.stage, s.unlocked, p.mastered, isGated(s.track, last), prac])) {
     let h = '';
     enemies.forEach((en, j) => {
@@ -1958,7 +2088,7 @@ function hudTick() {
     const ab = abilities[a.name], left = cool[a.name] || 0, frac = left / ab.cd;
     a.c.setAttribute('stroke-dashoffset', (119.4 * frac).toFixed(1));
     a.el.classList.toggle('cool', left > 0);
-    if (a.left !== left) { a.ic.innerHTML = left > 0 ? `<b>${left}</b>` : a.icon; a.left = left; }
+    const sec = Math.ceil(left - 1e-9); if (a.left !== sec) { a.ic.innerHTML = sec > 0 ? `<b>${sec}</b>` : a.icon; a.left = sec; }
   }
   $('autoBtn').setAttribute('aria-pressed', s.auto); $('autoBtn').innerHTML = icon('repeat', 16) + 'Auto';
   if (changed('pause', s.paused)) { $('pauseBtn').innerHTML = icon(s.paused ? 'play' : 'pause', 18); $('pauseBtn').setAttribute('aria-label', s.paused ? 'Resume' : 'Pause'); }
@@ -1983,13 +2113,13 @@ function buildMap() {
   }
   for (const n of nodes) {
     const c = discColor(nodeDiscipline(n)), g = sv('g', { class: 'nd', 'data-id': n.id, style: `--c:${n.id === 'origin' ? '#C79A3F' : c}`, role: 'button', tabindex: '-1' }, gN);
-    const r = n.id === 'origin' ? 28 : n.all || n.master ? 24 : 21;
+    const r = n.id === 'origin' ? 28 : n.all || n.master ? 24 : n.sat ? 14 : 21;
     sv('circle', { cx: n.x, cy: n.y, r: r + 12, class: 'halo' }, g);
-    sv('circle', { cx: n.x, cy: n.y, r: 34, class: 'hitc' }, g);
+    sv('circle', { cx: n.x, cy: n.y, r: n.sat ? 24 : 34, class: 'hitc' }, g);
     sv('circle', { cx: n.x, cy: n.y, r, class: 'b' }, g);
     sv('circle', { cx: n.x + r * .72, cy: n.y - r * .72, r: 7, class: 'ck' }, g);
     const mk = sv('text', { x: n.x, y: n.y + 5, class: 'mk' }, g);
-    const lp = labelPos(n, r), lab = sv('text', { x: lp.x, y: lp.y, class: 'lab', 'text-anchor': lp.a }, g); lab.textContent = n.name.length > 22 ? n.name.slice(0, 20) + '…' : n.name;
+    if (!n.sat) { const lp = labelPos(n, r), lab = sv('text', { x: lp.x, y: lp.y, class: 'lab', 'text-anchor': lp.a }, g); lab.textContent = n.name.length > 22 ? n.name.slice(0, 20) + '…' : n.name; }
     const title = sv('title', {}, g); title.textContent = n.name;
     MAP.nodes[n.id] = { g, mk, cls: '' };
   }
@@ -2134,7 +2264,7 @@ function careerCard(i) {
   }
   const pills = [];
   if (s.career === i) pills.push('<span class="chip small" style="background:var(--teal);color:#fff">Your job</span>');
-  if (p.mastered) pills.push('<span class="chip small gold">Mastered</span>');
+  if (p.mastered) pills.push(`<span class="chip small gold">${expertRank(i) ? 'Expert ' + RANK_NAMES[expertRank(i)] : 'Mastered'}</span>`);
   const locked = i && s.career !== i && !careerOpen(i), rd = locked ? careerReadiness(i) : 1;
   if (locked) pills.push('<span class="chip small">Not ready yet</span>');
   else if ((p.unlocked || 0) === last && i) pills.push(`<span class="chip small ${isGated(i, last) ? '' : 'coral'}">${isGated(i, last) ? 'Boss locked' : 'Boss ready'}</span>`);
@@ -2143,6 +2273,7 @@ function careerCard(i) {
   const acts = [];
   if (locked) acts.push(`<div class="ready"><span>${Math.floor(rd * 100)}% ready for ${esc(E[0][0])}</span><div class="achmeter"><i style="width:${(rd * 100).toFixed(1)}%"></i></div><small class="muted">You need ${readinessHint(i)}. ${careerTier(i) >= 2 ? tierNames[careerTier(i)] + ' jobs build on Entry careers, so master a few of those first.' : 'Level up, put stat points into Drive or upgrade gear.'}</small></div>`);
   else if (s.career !== i) acts.push(`<button class="btn small primary" data-act="work" data-arg="${i}">${icon('battle', 16)}Work here</button>`);
+  if (i && p.mastered && expertRank(i) < 5) { const re = rematchEnemy(i), f = battleForecast(re, 5); acts.push(`<button class="btn small ${f.ok ? '' : 'ghost'}" data-act="rematch" data-arg="${i}" title="${esc(re[0])}">${icon('crown', 16)}Expert ${RANK_NAMES[expertRank(i) + 1]} rematch${f.ok ? '' : ' · tough'}</button>`); }
   return `<article class="ccard ${s.career === i ? 'active' : ''}">${careerTile(i)}<div class="body"><div class="t"><b>${esc(name)}</b>${pills.join('')}</div><div class="meta">${esc(meta)}</div><div class="prog" style="grid-template-columns:repeat(${E.length},minmax(0,1fr))">${segs}</div>${i ? `<div class="meta" style="margin:6px 0 0">Mastery perk: ${careerPerk(i)[2]}${p.mastered ? ' (active)' : ''}</div>` : ''}${acts.length ? `<div class="acts">${acts.join('')}</div>` : ''}</div></article>`;
 }
 function renderCareers() {
@@ -2164,7 +2295,7 @@ function affordKey(prices) { return prices.filter(p => p <= s.money).length; }
 function renderLife() {
   const el = $('scr-life');
   const prices = [...items.map((a, i) => isEveryday(i) ? shopPrice(i, 0) : 0), ...furniture.map(f => f[2]), ...rooms.map(r => r[2]), ...homePrices, ...pets.map((p, i) => p[1] * ((s.pets[i] || 0) + 1)), ...careers.map((c, i) => i ? businessCost(i) : 0), ...equippedItems().map(it => rankCost(it).money), ...TRAINING.map(([k]) => trainingCost(k))];
-  if (!changed('life', [lifeView, lifeView === 'research' ? Math.floor(s.lifeClock / 5) : 0, s.rActive.length, JSON.stringify(s.research), affordKey(prices), s.parts, s.bag.length, gearVer, s.home, s.rooms, s.furniture, s.decor, s.pets, s.activePet, s.businesses, s.owned.length, masteredCount(), s.training, s.look, s.career])) return;
+  if (!changed('life', [s.courses, lifeView, lifeView === 'research' ? Math.floor(s.lifeClock / 5) : 0, s.rActive.length, JSON.stringify(s.research), affordKey(prices), s.parts, s.bag.length, gearVer, s.home, s.rooms, s.furniture, s.decor, s.pets, s.activePet, s.businesses, s.owned.length, masteredCount(), s.training, s.look, s.career])) return;
   keepScroll(el, () => el.innerHTML = lifeView === 'research' ? lifeResearch() : lifeView === 'home' ? lifeHome() : lifeView === 'gear' ? lifeGear() : lifeView === 'shop' ? lifeShop() : lifeView === 'pets' ? lifePets() : lifeView === 'training' ? lifeTraining() : lifeView === 'look' ? lifeLook() : lifeBusiness());
 }
 const sub = title => `<div class="subhead"><button class="iconbtn" data-act="life" data-arg="home" aria-label="Back to Life">${icon('back', 20)}</button><h1>${title}</h1></div>`;
@@ -2197,30 +2328,39 @@ function lifeLook() {
    <h3>Outfit</h3><div class="swatches"><button class="btn small ${L.outfit < 0 ? 'primary' : ''}" data-act="look" data-arg="outfit:-1" aria-pressed="${L.outfit < 0}">Match career</button>${OUTFITS.map((c, i) => sw('outfit', i, L.outfit === i, c, 'Outfit colour ' + (i + 1))).join('')}</div>
    <p class="muted" style="font-size:12px;font-weight:700">Your career still adds its accessory, like glasses for research or a headset for tech.</p></div></div>`;
 }
-function itemCard(it, mode) {
-  const b = items[it.b], x = itemStats(it), eq = Object.values(s.equip).includes(it.u), cur = bagItem(s.equip[b[5]]), si = itemSet(it);
-  const diff = !eq && cur ? Math.round((itemScore(it) / Math.max(1, itemScore(cur)) - 1) * 100) : null, c = rankCost(it);
-  const aff = it.a.map(([k, v]) => `<span class="chip small">${AFFIXES[k][2](v)}</span>`).join('') + (si != null ? `<span class="chip small gold">${esc(GEAR_SETS[si][0])}</span>` : '');
-  const head = `${picture(itemArt[it.b] || 'bag', b[0], 42)}<div class="body"><b>${esc(b[0])}</b><small><span class="rarity ${RARITY[it.r]}">${RARITY[it.r]}</span> ${b[5]} · Lv ${it.l}${it.k ? ' · Rank ' + RANK_NAMES[it.k] : ''}${diff !== null ? ` · <b style="color:${diff > 0 ? '#2F6F68' : '#9A3412'}">${diff > 0 ? '+' : ''}${diff}%</b>` : ''}</small><small>${statLine(Math.round(x.p), Math.round(x.h), Math.round(x.d))}</small>${aff ? `<div class="row" style="flex-wrap:wrap;gap:4px;margin-top:4px">${aff}</div>` : ''}</div>`;
-  if (mode === 'slot') return `<div class="item gearslot">${head}<div class="acts"><button class="btn small primary" data-act="rankUp" data-arg="${it.u}" ${it.k >= 10 || s.parts < c.parts || s.money < c.money ? 'disabled' : ''}>${it.k >= 10 ? 'Max rank' : `Rank up · ${fmt(c.parts)} parts + ${money$(c.money)}`}</button></div></div>`;
-  return `<div class="item">${head}<div class="acts"><button class="btn small" data-act="equipItem" data-arg="${it.u}" ${eq ? 'disabled' : ''}>${eq ? 'Equipped' : 'Equip'}</button>${eq ? '' : `<button class="btn small ghost" data-act="salvageItem" data-arg="${it.u}">Salvage · +${salvageValue(it)}</button>`}</div></div>`;
+// compact gear tiles: colour = rarity, badges = rank and level; tap for details
+function itemTile(it, opts = {}) {
+  const b = items[it.b], cur = bagItem(s.equip[b[5]]), better = !opts.equipped && (!cur || itemScore(it) > itemScore(cur));
+  return `<button class="gtile r${it.r}${opts.equipped ? ' eq' : ''}" data-act="itemSheet" data-arg="${it.u}" aria-label="${esc(b[0])}, ${RARITY[it.r]}, level ${it.l}${it.k ? ', rank ' + it.k : ''}">${opts.equipped ? `<span class="gslot">${b[5] === "Accessory" ? "Acc." : b[5]}</span>` : ''}${it.k ? `<span class="grank">${RANK_NAMES[it.k]}</span>` : ''}${better ? `<span class="gup">▲</span>` : ''}${itemSet(it) != null ? '<span class="gset"></span>' : ''}${picture(itemArt[it.b] || 'bag', b[0], 40)}<span class="glv">Lv ${it.l}</span></button>`;
 }
 function lifeGear() {
   const sc = setCounts(), sets = Object.entries(sc).map(([si, n]) => { const st = GEAR_SETS[si]; return `<span class="chip small ${n >= 2 ? 'gold' : ''}">${esc(st[0])} ${n}/5${n >= 2 ? ' · ' + st[3][0][2] : ''}${n >= 4 ? ' · ' + st[3][1][2] : ''}</span>`; }).join('');
-  const slotsHtml = gearSlots.map(sl => { const it = bagItem(s.equip[sl]); return it ? itemCard(it, 'slot') : `<div class="item emptyslot"><div class="body"><b>${sl}</b><small>Empty. Gear drops in battle, or buy some in the Shop.</small></div></div>`; }).join('');
+  const eqRow = gearSlots.map(sl => { const it = bagItem(s.equip[sl]); return it ? itemTile(it, { equipped: true }) : `<div class="gtile empty"><span class="gslot">${sl === "Accessory" ? "Acc." : sl}</span><small>Empty</small></div>`; }).join('');
   const bag = s.bag.filter(it => !Object.values(s.equip).includes(it.u)).sort((a, b) => gearSlots.indexOf(items[a.b][5]) - gearSlots.indexOf(items[b.b][5]) || itemScore(b) - itemScore(a));
-  const worse = bag.filter(it => { const cur = bagItem(s.equip[items[it.b][5]]); return cur && itemScore(it) <= itemScore(cur); });
-  return `<p class="muted" style="font-size:13px;margin:0 0 8px">Gear drops at your level. Rank items up with parts and money (+${Math.round(BAL.rankStep * 100)}% per rank, up to Rank X). Rare items roll bonus stats; set pieces add bonuses at 2 and 4 pieces.</p>
-  ${sets ? `<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px">${sets}</div>` : ''}<div class="list">${slotsHtml}</div>
+  const worse = bag.filter(it => { const cur = bagItem(s.equip[items[it.b][5]]); return cur && itemScore(it) <= itemScore(cur) && !it.lock; });
+  return `<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px">${RARITY.map((r, i) => `<span class="rdot r${i}">${r}</span>`).join('')}<span class="muted" style="font-size:12px;font-weight:700">· tap an item for details</span></div>
+  <div class="ggrid eqrow">${eqRow}</div>${sets ? `<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${sets}</div>` : ''}
   <div class="sechead"><h2>Bag · ${s.bag.length}/${BAL.bagMax}</h2><span class="chip">${fmt(s.parts)} parts</span></div>
-  <div class="row" style="flex-wrap:wrap;margin-bottom:8px"><button class="btn small" data-act="equipBest">Equip best</button><button class="btn small ghost" data-act="salvageWorse" ${worse.length ? '' : 'disabled'}>Salvage ${worse.length} weaker · +${fmt(worse.reduce((v, it) => v + salvageValue(it), 0))} parts</button><button class="btn small" data-act="openShop">${icon('shop', 16)}Shop</button></div>
-  <div class="list">${bag.map(it => itemCard(it)).join('') || '<p class="muted">Nothing spare. When the bag is full, the weakest spare item is salvaged automatically.</p>'}</div>`;
+  <div class="row" style="flex-wrap:wrap;margin-bottom:10px"><button class="btn small" data-act="equipBest">Equip best</button><button class="btn small ghost" data-act="salvageWorse" ${worse.length ? '' : 'disabled'}>Salvage ${worse.length} weaker · +${fmt(worse.reduce((v, it) => v + salvageValue(it), 0))}</button><button class="btn small" data-act="openShop">${icon('shop', 16)}Shop</button></div>
+  ${bag.length ? `<div class="ggrid">${bag.map(it => itemTile(it)).join('')}</div>` : '<p class="muted">Nothing spare. When the bag is full, the weakest spare item is salvaged automatically.</p>'}`;
 }
+function itemSheetHtml(u) {
+  const it = bagItem(u); if (!it) return '';
+  const b = items[it.b], x = itemStats(it), eq = Object.values(s.equip).includes(it.u), cur = bagItem(s.equip[b[5]]), cx = cur && !eq ? itemStats(cur) : null, c = rankCost(it), si = itemSet(it);
+  const line = (lab, v, cv) => `<div class="spread"><span>${lab}</span><b>${fmt(Math.round(v))}${cx ? ` <small style="color:${v >= cv ? '#2F6F68' : '#9A3412'}">${v >= cv ? '+' : ''}${fmt(Math.round(v - cv))}</small>` : ''}</b></div>`;
+  return `<div class="spread"><h2>${esc(b[0])}</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div>
+  <div class="row" style="gap:14px;align-items:center"><div class="gtile r${it.r} big">${picture(itemArt[it.b] || 'bag', b[0], 56)}</div><div><span class="rdot r${it.r}">${RARITY[it.r]}</span> <b>${b[5]}</b><br><small class="muted" style="font-weight:700">Level ${it.l}${it.k ? ' · Rank ' + RANK_NAMES[it.k] : ' · Unranked'}${eq ? ' · Equipped' : ''}</small></div></div>
+  <div class="card" style="display:grid;gap:4px;margin-top:10px">${line('Impact', x.p, cx && cx.p)}${line('Composure', x.h, cx && cx.h)}${line('Resistance', x.d, cx && cx.d)}${cx ? `<small class="muted">Compared with your ${esc(items[cur.b][0])}</small>` : ''}</div>
+  ${it.a.length || si != null ? `<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${it.a.map(([k, v]) => `<span class="chip small">${AFFIXES[k][2](v)}</span>`).join('')}${si != null ? `<span class="chip small gold">${esc(GEAR_SETS[si][0])}: 2 = ${GEAR_SETS[si][3][0][2]}, 4 = ${GEAR_SETS[si][3][1][2]}</span>` : ''}</div>` : ''}
+  ${it.k < 10 ? `<p class="muted" style="font-size:13px;margin:10px 0 6px">Rank up for +${Math.round(BAL.rankStep * 100)}% stats. Pay with parts <b>or</b> money.</p><div class="row" style="flex-wrap:wrap"><button class="btn primary" data-act="rankUp" data-arg="${it.u}:parts" ${s.parts < c.parts ? 'disabled' : ''}>Rank up · ${fmt(c.parts)} parts</button><button class="btn" data-act="rankUp" data-arg="${it.u}:money" ${s.money < c.money ? 'disabled' : ''}>Rank up · ${money$(c.money)}</button></div>` : '<p class="muted">Max rank reached. Impressive dedication to one item.</p>'}
+  <div class="row" style="flex-wrap:wrap;margin-top:10px">${eq ? '<span class="chip">Equipped</span>' : `<button class="btn primary" data-act="equipItem" data-arg="${it.u}">Equip</button><button class="btn ghost" data-act="salvageItem" data-arg="${it.u}" ${it.lock ? 'disabled' : ''}>Salvage · +${salvageValue(it)} parts</button>`}<button class="btn ghost" data-act="lockItem" data-arg="${it.u}">${it.lock ? 'Unlock' : 'Lock'}</button></div>`;
+}
+
 function hms(x) { x = Math.max(0, Math.round(x)); const h = Math.floor(x / 3600), m = Math.floor(x % 3600 / 60), sec = x % 60; return h ? h + 'h ' + m + 'm' : m ? m + 'm ' + sec + 's' : sec + 's'; }
 function lifeResearch() {
   const slotsN = researchSlots(), act = s.rActive;
   const fmtB = (k, v) => k === 'away' ? '+' + v + ' h away' : k === 'crit' ? '+' + (v * 100).toFixed(1) + '% crit' : '+' + Math.round(v * 100) + '% ' + BONUS_TEXT[k];
-  return sub('Library') + `<p class="muted" style="font-size:13px;margin-bottom:8px">Research runs on its own, even while you are away. ${act.length}/${slotsN} projects running · speed ×${researchSpeed().toFixed(2)} (Library furniture and study skills make it faster).</p><div class="list">${RESEARCH.map(r => {
+  return sub('Library') + `<section class="card" style="margin-bottom:10px"><div class="spread"><div><b>Night classes</b><br><small class="muted">Buy a skill point. Price rises 20% each time (${s.courses || 0} taken).</small></div><button class="btn small primary" data-act="course" ${s.money < courseCost() ? 'disabled' : ''}>+1 ${lpIcon(12)} · ${money$(courseCost())}</button></div></section><p class="muted" style="font-size:13px;margin-bottom:8px">Research runs on its own, even while you are away. ${act.length}/${slotsN} projects running · speed ×${researchSpeed().toFixed(2)} (Library furniture and study skills make it faster).</p><div class="list">${RESEARCH.map(r => {
     const lv = researchLevel(r[0]), a = act.find(x => x.k === r[0]), max = lv >= r[4], c = researchCost(r[0]);
     const pr = a ? Math.min(1, 1 - (a.end - s.lifeClock) / a.dur) : 0;
     return `<div class="item"><div class="body"><b>${esc(r[1])} · ${lv}/${r[4]}</b><small>${lv ? 'Now ' + fmtB(r[2], lv * r[3]) + ' · ' : ''}${max ? 'Fully researched' : 'Next level: ' + fmtB(r[2], r[3])}</small><small class="muted" style="font-style:italic">${esc(r[5])}</small>${a ? `<div class="achmeter"><i style="width:${(pr * 100).toFixed(1)}%"></i></div><small>${hms(a.end - s.lifeClock)} left</small>` : ''}</div><div class="acts">${a ? '<span class="chip small">Researching</span>' : max ? '<span class="chip small gold">Done</span>' : `<button class="btn small primary" data-act="research" data-arg="${r[0]}" ${s.money < c || act.length >= slotsN ? 'disabled' : ''}>${money$(c)} · ${hms(researchTime(r[0]))}</button>`}</div></div>`; }).join('')}</div>`;
@@ -2288,9 +2428,12 @@ function renderYou() {
 // ---------------- journal ----------------
 function renderJournal() {
   const rows = [['Careers discovered', s.discovered.filter(i => i > 0).length, careers.length - 1], ['Careers mastered', masteredCount(), careers.length - 1], ['Skills learned', skillCount(), nodes.length - 1], ['Equipment collected', s.collectedGear.length, items.length], ['Furniture collected', s.collectedFurniture.length, furniture.length], ['Companions adopted', Object.keys(s.pets).length, pets.length], ['Businesses opened', Object.keys(s.businesses).length, careers.length - 1], ['Achievements', s.achievements.length, achievements.length]];
-  if (!changed('journal', [rows, achievements.map(a => Math.floor(Math.min(a[5], a[4](s)) / a[5] * 50)), s.autoNext, saveStatus, s.discovered.length, cloud.status, !!cloud.user])) return;
+  if (!changed('journal', [weeklyState().prog, s.legacy && s.legacy.points, masteredCount(), rows, achievements.map(a => Math.floor(Math.min(a[5], a[4](s)) / a[5] * 50)), s.autoNext, saveStatus, s.discovered.length, cloud.status, !!cloud.user])) return;
   const el = $('scr-journal');
+  const wk = weeklyState(), mcN = masteredCount(), L = s.legacy;
   keepScroll(el, () => el.innerHTML = `<div class="gridhead"><h1>Journal</h1></div>
+  <section class="card" style="margin-bottom:12px"><div class="spread"><b>Weekly challenge</b><span class="chip small ${wk.done ? 'gold' : ''}">${wk.done ? 'Done · +5 skill points' : 'Resets Monday · +5 skill points'}</span></div><div style="margin-top:6px;font-weight:700">${esc(wk.w[0])}</div><div class="achmeter"><i style="width:${Math.min(100, wk.prog / wk.target * 100).toFixed(1)}%"></i></div><small class="muted">${fmt(Math.min(wk.prog, wk.target))} / ${fmt(wk.target)}</small></section>
+  <section class="card" style="margin-bottom:12px"><div class="spread"><b>The Next Generation${L ? ' · Generation ' + L.gen : ''}</b>${L ? `<span class="chip small gold">${L.points} legacy points</span>` : ''}</div><small class="muted">${mcN >= RETIRE_AT ? 'You can retire! Your kid takes over with heirlooms that make every generation stronger.' : `Master ${RETIRE_AT} careers to retire and pass the torch (${mcN}/${RETIRE_AT}).`}</small><div class="row" style="flex-wrap:wrap;margin-top:8px"><button class="btn small ${mcN >= RETIRE_AT ? 'primary' : ''}" data-act="retireSheet" ${mcN >= RETIRE_AT ? '' : 'disabled'}>Retire · +${legacyEarned()} legacy</button>${L ? '<button class="btn small" data-act="heirloomSheet">Heirlooms & family album</button>' : ''}</div></section>
   <section class="card">${rows.map(([n, a, b]) => `<div class="stat"><div class="spread"><span>${n}</span><b>${a} / ${b}</b></div><div class="meter"><i style="width:${(a / b * 100).toFixed(1)}%"></i></div></div>`).join('')}</section>
   <div class="sechead"><h2>Achievements · ${s.achievements.length}/${achievements.length}</h2><span class="muted" style="font-size:12px;font-weight:700">+1 skill point each</span></div>
   <section class="card">${achievementCats.map(cat => `<div class="achgrp">${cat}</div>` + achievements.filter(a => a[3] === cat).sort((a, b) => s.achievements.includes(b[0]) - s.achievements.includes(a[0])).map(a => { const got = s.achievements.includes(a[0]), cur = Math.min(a[5], Math.floor(a[4](s))); return `<div class="ach"><span class="tile" style="background:${got ? 'var(--gold-soft)' : 'var(--sand)'}">${icon(got ? 'trophy' : 'lock', 18, got ? '#7A4B07' : '#8A7F6C')}</span><span style="flex:1;min-width:0"><b style="display:block;font-size:14px">${esc(a[0])}</b><small class="muted">${esc(a[2])}</small>${got ? '' : `<div class="achmeter"><i style="width:${(cur / a[5] * 100).toFixed(1)}%"></i></div>`}</span><span class="muted" style="font-size:12px;white-space:nowrap">${got ? 'Earned' : fmt(cur) + ' / ' + fmt(a[5])}</span></div>`; }).join('')).join('')}</section>
@@ -2299,15 +2442,17 @@ function renderJournal() {
   <details class="card" style="margin-top:12px"><summary>Learned skills · ${skillCount()} ${icon('chev', 16)}</summary>${nodes.filter(n => owned(n.id) && n.id !== 'origin').map(n => `<div class="ach"><span style="flex:1"><b style="display:block;font-size:14px">${esc(n.name)}</b><small class="muted">${esc(nodeDesc(n))}</small></span><span class="chip small">${n.ability ? 'Active' : 'Passive'}</span></div>`).join('') || '<p class="muted">Your learned skills will appear here.</p>'}</details>
   <details class="card" style="margin-top:12px"><summary>How to play ${icon('chev', 16)}</summary><ol class="help" style="padding-left:20px;margin:0">
    <li>Battles run on their own and earn XP and money. Each level gives a <b>stat point</b> to put into Drive, Resilience, Grit or Luck on the You screen.</li>
-   <li>Skill points come from first clears of a career's 1st and 3rd stages, every Everyday Life stage, masteries, every 3rd level and achievements. Spend them on the Grid. Explore freely, or tap the Next career bar to light up the path and put gold dots on the skills that career needs.</li>
+   <li>Skill points come from first clears of a career's 1st and 3rd stages, every Everyday Life stage, masteries, every 3rd level, achievements, Expert rematches, weekly challenges and night classes. Spend them on the Grid. Explore freely, or tap the Next career bar to light up the path and put gold dots on the skills that career needs.</li>
    <li>There are ${careers.length - 1} careers. Each one's mastery boss opens at its own level and skill count, so harder-paying careers in a tier open a little later.</li>
    <li>You always battle your current career's obstacles. Beat the boss to master it: bonus skill points and a permanent perk.</li>
    <li>Hits vary a little. Luck raises your chance of a critical hit (×${BAL.critMult} damage). Obstacles have armor, which softens small hits more than big ones.</li>
    <li>Resistance reduces incoming stress by a percentage, so it stays useful against tougher obstacles.</li>
    <li>Lose a fight and you step back one stage to train for three wins, then retry automatically.</li>
    <li>Ability slots open at levels 8, 15 and 22. Abilities scale with your impact and composure.</li>
-   <li>Gear drops at your level and comes in four rarities. Rank items up (I to X) with parts and money. Rare items roll bonus stats, and set pieces add bonuses at 2 and 4 pieces.</li>
-   <li>Build the Library room to unlock research: permanent bonuses that keep progressing while you are away.</li>
+   <li>Gear drops at your level and comes in four rarities, shown by color. Tap an item for details and rank it up (I to X) with parts or money. Rare items roll bonus stats, and set pieces add bonuses at 2 and 4 pieces.</li>
+   <li>Build the Library room to unlock research: permanent bonuses that keep progressing while you are away. Its night classes sell extra skill points.</li>
+   <li>Mastered careers can be rematched at Expert I to V for double loot and +2 skill points each. A weekly challenge (resets Monday) is worth +5 skill points.</li>
+   <li>The Next Generation: after ${RETIRE_AT} masteries you can retire. Your kid starts from scratch but keeps achievements and your look, and you earn legacy points for heirlooms that boost every future generation.</li>
    <li>Obstacles have traits (armored, evasive, enraged…). Tap the trait badge in battle to see its counter.</li>
    <li>Abilities can be ranked up with skill points (+20% per rank). Keystones on the Grid add ability and research slots.</li>
    <li>Watch for Lucky Break bubbles in battle, and ace job interviews for a first-day XP bonus.</li>
@@ -2317,7 +2462,7 @@ function renderJournal() {
   <section class="card" style="display:grid;gap:10px">
    <label class="spread" style="font-weight:700;font-size:14px;min-height:44px"><span>Auto-switch careers after a mastery or when stuck</span><input type="checkbox" data-act="autoNext" ${s.autoNext ? 'checked' : ''} style="width:22px;height:22px;accent-color:#2F6F68"></label>
    <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="save">${icon('save', 16)}Save now</button><button class="btn small" data-act="export">${icon('download', 16)}Export</button><button class="btn small" data-act="copySave">${icon('save', 16)}Copy save</button><button class="btn small" data-act="import">${icon('upload', 16)}Import</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
-   <small class="muted">${esc(saveStatus)} · stored in this browser · v0.16</small>
+   <small class="muted">${esc(saveStatus)} · stored in this browser · v0.17</small>
    <div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px"><b style="font-size:14px">Cloud save</b><small class="muted">${esc(cloud.status)}</small>${!cloud.on ? '' : cloud.user ? `<div class="row" style="flex-wrap:wrap"><button class="btn small primary" data-act="cloudPush">${icon('upload', 16)}Save to cloud now</button><button class="btn small ghost" data-act="cloudSignOut">Sign out</button></div>` : cloud.ready ? `<button class="btn small primary" style="justify-self:start" data-act="cloudSignIn">Sign in with Google</button>` : ''}</div>
    <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="feedback">${icon('chat', 16)}Send feedback</button><button class="btn small" data-act="playStats">${icon('chart', 16)}Play stats</button><button class="btn small" data-act="tutReplay">${icon('repeat', 16)}Replay tutorial</button></div>
    <button class="btn small" style="color:#9A3412;justify-self:start" data-act="newgameSheet">Start a new game…</button>
@@ -2338,9 +2483,26 @@ function renderSheet() {
     const list = Object.keys(abilities).filter(n => owned(byName[n])), st = stats();
     h = `<div class="spread"><h2>Abilities · ${s.equipped.length}/${slots()} slots</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><div class="list">${list.length ? list.map(n => { const a = abilities[n], eq = s.equipped.includes(n), d = abilityDamage(a, st), hl = abilityHeal(a, st); const rk = abilityRank(n), rc = abilityRankCost(n); return `<div class="item" ${eq ? 'style="outline:2px solid #2F6F68"' : ''}><div class="body"><b>${esc(n)} ${rk ? '<span class="chip small gold">Rank ' + RANK_NAMES[rk] + '</span>' : ''}</b><small>${[d && fmt(d) + ' impact', hl && '+' + fmt(hl) + ' composure'].filter(Boolean).join(' · ')} · every ${a.cd}s</small></div><div class="acts">${rk < 5 ? `<button class="btn small ghost" data-act="rankAb" data-arg="${esc(n)}" ${s.lp < rc ? 'disabled' : ''} title="+20% per rank">Rank up · ${rc} ${lpIcon(12)}</button>` : '<span class="chip small">Max rank</span>'}<button class="btn small ${eq ? '' : 'primary'}" data-act="equipAb" data-arg="${esc(n)}" ${!eq && s.equipped.length >= slots() ? 'disabled' : ''}>${eq ? 'Remove' : 'Equip'}</button></div></div>`; }).join('') : '<p class="muted">Learn ★ abilities on the Grid. Basic attacks always work.</p>'}</div>
     <div class="sechead" style="margin-top:6px"><h3>Saved builds</h3></div><div class="row" style="flex-wrap:wrap">${[0, 1, 2].map(k => `<span class="row" style="gap:4px;background:#fff;border-radius:12px;padding:4px 4px 4px 10px"><b style="font-size:13px">Build ${k + 1}</b><button class="btn small ghost" data-act="presetSave" data-arg="${k}">Save</button><button class="btn small ghost" data-act="presetLoad" data-arg="${k}" ${Array.isArray(s.presets[k]) ? '' : 'disabled'}>Load</button></span>`).join('')}</div>`;
+  } else if (sheetKind === 'retire') {
+    const gain = legacyEarned();
+    h = `<div class="spread"><h2>Retire to a beach chair?</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><p>You have mastered ${masteredCount()} careers. Time to hand the keys to your kid, who is already rolling their eyes at you.</p><div class="card" style="display:grid;gap:6px"><div class="spread"><span>Your life title</span><b>${esc(lifeTitle())}</b></div><div class="spread"><span>Legacy points earned</span><b>+${gain}</b></div><small class="muted">Your kid starts over at "Congratulations, you exist": level 1, no skills, careers, gear, money, home or research. Achievements, heirlooms, the family album and your look carry over. Spend legacy points on heirlooms that make every future generation stronger.</small></div><button class="btn primary wide" data-act="doRetire" style="margin-top:10px">Retire and start Generation ${(s.legacy ? s.legacy.gen : 1) + 1}</button>`;
+  } else if (sheetKind === 'heirlooms') {
+    const L = s.legacy || { points: 0, album: [], gen: 1 };
+    h = `<div class="spread"><h2>Heirlooms · ${L.points} legacy points</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><div class="list">${HEIRLOOMS.map(hh => { const r = legacyRank(hh[0]); return `<div class="item"><div class="body"><b>${esc(hh[1])} · ${r}/${hh[4]}</b><small>${hh[2] === 'startLP' ? '+' + hh[3] + ' starting skill points' : '+' + (hh[2] === 'crit' ? (hh[3] * 100).toFixed(0) + '% crit chance' : Math.round(hh[3] * 100) + '% ' + (hh[2] === 'research' ? 'research speed' : BONUS_TEXT[hh[2]]))} per rank</small><small class="muted" style="font-style:italic">${esc(hh[5])}</small></div><button class="btn small primary" data-act="buyHeirloom" data-arg="${hh[0]}" ${r >= hh[4] || L.points < heirloomCost(hh[0]) ? 'disabled' : ''}>${r >= hh[4] ? 'Max' : heirloomCost(hh[0]) + ' legacy'}</button></div>`; }).join('')}</div>${L.album.length ? `<div class="sechead"><h2>Family album</h2></div><div class="list">${L.album.map(a => `<div class="item"><div class="body"><b>Generation ${a.gen}: ${esc(a.title)}</b><small>Level ${a.level} · ${a.mastered} careers mastered · retired as ${esc(a.career)}</small></div></div>`).join('')}</div>` : ''}`;
+  } else if (sheetKind === 'item') {
+    h = itemSheetHtml(sheetArg); if (!h) { closeSheet(); return; }
   } else if (sheetKind === 'room') {
     const j = sheetArg, r = rooms[j], pl = placedIn(j);
-    h = `<div class="spread"><h2>${esc(r[0])} · ${pl.length}/${decorSlots()} placed</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div>${roomCard(j)}<div class="list">${furniture.map((f, k) => f[1] !== j ? '' : `<div class="item" ${pl.includes(k) ? 'style="outline:2px solid #2F6F68"' : ''}><div class="body"><b>${esc(f[0])} · ×${s.furniture[k] || 0}</b><small>${statLine(f[4], f[5], f[6], [f[7] && '+' + Math.round(f[7] * 100) + '% XP', f[8] && '+' + Math.round(f[8] * 100) + '% income'])}</small></div><div class="acts">${s.furniture[k] ? `<button class="btn small ${pl.includes(k) ? '' : 'primary'}" data-act="decor" data-arg="${k}">${pl.includes(k) ? 'Remove' : 'Place'}</button>` : ''}<button class="btn small ghost" data-act="fbuy" data-arg="${k}" ${s.money < f[2] ? 'disabled' : ''}>${money$(f[2])}</button><button class="btn small ghost" data-act="fcraft" data-arg="${k}" ${!owned('home-skill-0') || s.parts < f[3] ? 'disabled' : ''} title="${owned('home-skill-0') ? '' : 'Needs Furniture Crafting'}">Craft · ${f[3]}</button></div></div>`).join('')}</div><small class="muted">Each room holds ${decorSlots()} pieces${owned('home-skill-1') ? '' : ' (Interior Design on the Grid adds one more)'}. ${owned('home-skill-0') ? 'Furniture also drops in battle.' : 'Crafting needs Furniture Crafting on the Grid. Furniture also drops in battle.'}</small>`;
+    const fx = f => [f[4] && '+' + f[4] + ' imp', f[5] && '+' + f[5] + ' comp', f[6] && '+' + f[6] + ' res', f[7] && '+' + Math.round(f[7] * 100) + '% XP', f[8] && '+' + Math.round(f[8] * 100) + '% $'].filter(Boolean)[0];
+    h = `<div class="spread"><h2>${esc(r[0])} · ${pl.length}/${decorSlots()} placed</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div>${roomCard(j)}<p class="muted" style="font-size:13px;margin:8px 0">Tap a piece for details. Teal = placed · faded = not owned yet.</p><div class="ggrid ftiles">${furniture.map((f, k) => f[1] !== j ? '' : `<button class="ftile${pl.includes(k) ? ' placed' : ''}${s.furniture[k] ? '' : ' unowned'}" data-act="furnSheet" data-arg="${k}" aria-label="${esc(f[0])}">${pl.includes(k) ? '<span class="gup" style="background:#2F6F68">✓</span>' : ''}<svg viewBox="0 0 100 60" aria-hidden="true">${furnitureArt(j, k)}</svg><small>${s.furniture[k] ? esc(fx(f) || '') : money$(f[2])}</small></button>`).join('')}</div><small class="muted">Each room holds ${decorSlots()} pieces${owned('home-skill-1') ? '' : ' (Interior Design on the Grid adds one more)'}. Furniture also drops in battle.</small>`;
+  } else if (sheetKind === 'furn') {
+    const k = sheetArg, f = furniture[k], j = f[1], pl = placedIn(j), have = s.furniture[k] || 0, on = pl.includes(k);
+    const stats = [f[4] && ['Impact', '+' + f[4]], f[5] && ['Composure', '+' + f[5]], f[6] && ['Resistance', '+' + f[6]], f[7] && ['XP', '+' + Math.round(f[7] * 100) + '%'], f[8] && ['Income', '+' + Math.round(f[8] * 100) + '%']].filter(Boolean);
+    h = `<div class="spread"><button class="iconbtn" data-act="roomBack" data-arg="${j}" aria-label="Back to room">${icon('back', 18)}</button><h2 style="flex:1;margin-left:6px">${esc(f[0])}</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div>
+    <div class="ftile big ${on ? 'placed' : ''}"><svg viewBox="0 0 100 60" aria-hidden="true">${furnitureArt(j, k)}</svg></div>
+    <p class="muted" style="font-size:13px">${esc(rooms[j][0])} · you own ${have} · ${on ? 'placed' : 'not placed'} (${pl.length}/${decorSlots()} slots used)</p>
+    <div class="card" style="display:grid;gap:4px">${stats.map(([a, b]) => `<div class="spread"><span>${a}</span><b>${b}</b></div>`).join('')}<small class="muted">Bonuses count while the piece is placed.</small></div>
+    <div class="row" style="flex-wrap:wrap;margin-top:10px">${have ? `<button class="btn ${on ? '' : 'primary'}" data-act="decor" data-arg="${k}">${on ? 'Remove from room' : 'Place in room'}</button>` : ''}<button class="btn ${have ? 'ghost' : 'primary'}" data-act="fbuy" data-arg="${k}" ${s.money < f[2] ? 'disabled' : ''}>Buy · ${money$(f[2])}</button><button class="btn ghost" data-act="fcraft" data-arg="${k}" ${!owned('home-skill-0') || s.parts < f[3] ? 'disabled' : ''}>${owned('home-skill-0') ? 'Craft · ' + f[3] + ' parts' : 'Crafting needs Furniture Crafting'}</button></div>`;
   } else if (sheetKind === 'cloud') {
     const d = cloud.remote || {}, when = d.clientTime ? new Date(d.clientTime).toLocaleString() : 'unknown time';
     h = `<div class="spread"><h2>Which progress should we keep?</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><div class="item"><div class="body"><b>Cloud save</b><small>Level ${esc(d.level)} · ${esc(d.skills)} skills · ${esc(d.mastered)} mastered · saved ${esc(when)}</small></div><button class="btn small primary" data-act="cloudUseRemote">Use this</button></div><div class="item"><div class="body"><b>This device</b><small>Level ${s.level} · ${skillCount()} skills · ${masteredCount()} mastered</small></div><button class="btn small" data-act="cloudKeepLocal">Keep this</button></div><small class="muted">The one you don't pick is replaced.</small>`;
@@ -2462,20 +2624,30 @@ const ACT = {
   homeUp: () => { if (!lifeOpen('home')) return; const i = s.home; if (i < homeNames.length - 1 && s.money >= homePrices[i]) { s.money -= homePrices[i]; s.home++; notice('Moved to ' + homeNames[s.home] + '!'); } },
   buildRoom: a => { if (!lifeOpen('home')) return; const j = +a, r = rooms[j]; if (!s.rooms.includes(j) && s.home >= r[1] && owned(r[3]) && s.money >= r[2]) { s.money -= r[2]; s.rooms.push(j); openSheet('room', j); } },
   roomSheet: a => openSheet('room', +a),
-  decor: a => { const k = +a, r = sheetArg; if (!s.rooms.includes(r) || !s.furniture[k] || furniture[k][1] !== r) return; const pl = (s.decor[r] ||= []); if (pl.includes(k)) pl.splice(pl.indexOf(k), 1); else if (placedIn(r).length < decorSlots()) pl.push(k); else notice('This room is full. Remove a piece first (' + decorSlots() + ' slots).'); },
+  furnSheet: a => openSheet('furn', +a),
+  roomBack: a => openSheet('room', +a),
+  decor: a => { const k = +a, r = sheetKind === 'furn' ? furniture[k][1] : sheetArg; if (!s.rooms.includes(r) || !s.furniture[k] || furniture[k][1] !== r) return; const pl = (s.decor[r] ||= []); if (pl.includes(k)) pl.splice(pl.indexOf(k), 1); else if (placedIn(r).length < decorSlots()) pl.push(k); else notice('This room is full. Remove a piece first (' + decorSlots() + ' slots).'); },
   fbuy: a => { if (!lifeOpen('home')) return; const k = +a, f = furniture[k]; if (s.money >= f[2]) { s.money -= f[2]; s.furniture[k] = (s.furniture[k] || 0) + 1; const pl = (s.decor[f[1]] ||= []); if (s.rooms.includes(f[1]) && placedIn(f[1]).length < decorSlots() && !pl.includes(k)) pl.push(k); } },
   fcraft: a => { if (!lifeOpen('home')) return; const k = +a, f = furniture[k]; if (owned('home-skill-0') && s.parts >= f[3]) { s.parts -= f[3]; s.furniture[k] = (s.furniture[k] || 0) + 1; } },
   research: a => { if (startResearch(a)) notice('Research started.'); else notice(s.rActive.length >= researchSlots() ? 'All research slots are busy.' : 'Not enough money.'); },
   lucky: () => claimLucky(),
+  course: () => { if (takeCourse()) notice('Class complete! +1 skill point.'); },
+  rematch: a => { const i = +a; if (setCareer(i, true)) { s.rematch = i; resetBattle(); hp = stats().h; setScreen('battle'); notice('Expert rematch: ' + rematchEnemy(i)[0]); } },
+  retireSheet: () => openSheet('retire'),
+  heirloomSheet: () => openSheet('heirlooms'),
+  buyHeirloom: a => { if (buyHeirloom(a)) notice('Heirloom upgraded!'); },
+  doRetire: () => { const old = lifeTitle(), lv = s.level; if (retire()) { trophyQueue = []; hideTip(); closeSheet(); for (const k in sig) delete sig[k]; goalCache.key = ''; if (MAP.nodes) Object.values(MAP.nodes).forEach(r => r.cls = ''); MAP.edges.forEach(e => e.cls = ''); log('Generation ' + s.legacy.gen + ' begins. Your parent, ' + old + ', retired at level ' + lv + '.'); setScreen('battle'); renderAll(); save(); openSheet('heirlooms'); } },
   traitInfo: () => { const e = curEnemy(), m = mechanic(e, curMechIndex()); notice(TRAITS[m][0] + ': ' + TRAITS[m][1] + ' Counter: ' + TRAITS[m][2]); },
   ivAnswer: a => interviewAnswer(+a),
   ivDone: () => { interview = null; closeSheet(); },
   ivSkip: () => { if (interview) { s.interviewed.push(interview.career); interview = null; closeSheet(); } },
-  equipItem: a => { const it = bagItem(+a); if (it) { s.equip[items[it.b][5]] = it.u; gearVer++; } },
-  salvageItem: a => { const v = salvageItem(+a); if (v) notice('Salvaged for ' + v + ' parts.'); },
+  equipItem: a => { const it = bagItem(+a); if (it) { s.equip[items[it.b][5]] = it.u; gearVer++; notice('Equipped ' + items[it.b][0] + '.'); } },
+  salvageItem: a => { const v = salvageItem(+a); if (v) { notice('Salvaged for ' + v + ' parts.'); if (sheetKind === 'item') closeSheet(); } },
   salvageWorse: () => { let n = 0, v = 0; for (const it of [...s.bag]) { const cur = bagItem(s.equip[items[it.b][5]]); if (cur && cur !== it && itemScore(it) <= itemScore(cur)) { v += salvageItem(it.u); n++; } } notice('Salvaged ' + n + ' items for ' + v + ' parts.'); },
   equipBest: () => { equipBestGear(); notice('Equipped your best gear.'); },
-  rankUp: a => { const it = bagItem(+a); if (rankUp(+a)) notice(items[it.b][0] + ' is now Rank ' + RANK_NAMES[it.k] + '!'); },
+  rankUp: a => { const [u, how] = a.split(':'), it = bagItem(+u); if (rankUp(+u, how)) notice(items[it.b][0] + ' is now Rank ' + RANK_NAMES[it.k] + '!'); },
+  itemSheet: a => openSheet('item', +a),
+  lockItem: a => { const it = bagItem(+a); if (it) { it.lock = !it.lock; gearVer++; } },
   buyItem: a => { const [b, r] = a.split(':').map(Number), c = shopPrice(b, r); if (isEveryday(b) && r <= 1 && s.money >= c) { s.money -= c; addItem(makeItem(b, s.level, r), true); notice('Bought ' + items[b][0] + '.'); } },
   craftRare: a => { const c = craftCost(2); if (s.parts >= c.parts && s.money >= c.money) { s.parts -= c.parts; s.money -= c.money; const it = makeItem(pickBase(2, a), s.level, 2); addItem(it, true); notice('Crafted ' + items[it.b][0] + '!'); } },
   craftSet: a => { const [si, sl] = a.split(':'), c = craftCost(2); if (s.parts >= c.parts && s.money >= c.money) { s.parts -= c.parts; s.money -= c.money; const b = items.findIndex(x => x[7] === +si && x[5] === sl); const it = makeItem(b, s.level, 2); addItem(it, true); notice('Crafted ' + items[b][0] + '!'); } },
