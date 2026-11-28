@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F6F1E6">
-<title>Life, Unlocked • v0.15.1</title>
+<title>Life, Unlocked • v0.16</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -381,6 +381,13 @@ dialog::backdrop{background:#1F474466}
 .coach .row{justify-content:space-between;align-items:center}
 .coach .skip{background:none;border:0;color:var(--muted);font-weight:800;font-size:13px;cursor:pointer;padding:8px 4px}
 .coach .dots{display:flex;gap:4px}.coach .dots i{width:6px;height:6px;border-radius:3px;background:#E4DCCB}.coach .dots i.on{background:#E9A23B;width:14px}
+
+#map .nd.keystone .b{stroke:#E9A23B;stroke-width:5;fill:#FFF3D6}#map .nd.keystone.own .b{fill:#E9A23B}#map .nd.minor .b{stroke-dasharray:3 2}
+.lucky{position:absolute;left:-30%;z-index:6;display:flex;align-items:center;gap:6px;background:#FFF3D6;border:2px solid #E9A23B;border-radius:999px;padding:6px 12px 6px 6px;font:800 13px var(--body);color:#7A4B07;box-shadow:0 6px 18px #E9A23B55;cursor:pointer;animation:luckyFloat 12s linear forwards}
+.lucky span{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#F6DC92;animation:luckyPulse 1s ease-in-out infinite}
+@keyframes luckyFloat{0%{left:-30%}100%{left:105%}}@keyframes luckyPulse{50%{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.lucky{animation:none;left:30%}.lucky span{animation:none}}
+.item.gearslot{outline:2px solid #CFE3DD}.emptyslot{border:2px dashed #CFC5B2;background:transparent}
 </style>
 </head>
 <body>
@@ -409,7 +416,7 @@ dialog::backdrop{background:#1F474466}
           <div><div class="barlab"><span>Composure</span><span id="hpText"></span></div><div class="bar me" id="hpWrap"><i class="trail" id="hpTrail"></i><i id="hpBar"></i></div></div>
           <div><div class="barlab"><span>Obstacle</span><span id="enemyText"></span></div><div class="bar foe" id="enemyWrap"><i class="trail" id="enemyTrail"></i><i id="enemyBar"></i></div><div class="foestats" id="foeStats"></div></div>
         </div>
-        <div class="mech" id="mech"></div>
+        <div class="mech" id="mech" data-act="traitInfo" role="button" tabindex="0" style="cursor:pointer"></div>
         <div class="tools"><button class="mini" id="autoBtn" data-act="auto" aria-pressed="true" title="Auto advance">Auto</button><button class="mini" id="pauseBtn" data-act="pause" aria-label="Pause"></button></div>
         <div class="fighter hero" id="heroArt"></div>
         <div class="fighter pet" id="petArt" aria-label="Your companion"></div>
@@ -470,7 +477,7 @@ function picture(kind,label='',size=48){let k=String(kind), ink='#454b58', c='#8
 'coin':`<circle cx="50" cy="50" r="32" fill="#e4bd64"/><circle cx="50" cy="50" r="24" fill="none"/><path d="M50 31v38m10-28q-22-12-22 4t22 8q0 14-22 6"/>`,
 'house':`<path d="M15 43L50 12l35 31v43H15Z" fill="#f2d299"/><path d="M8 46L50 8l42 38" fill="none" stroke="#bd7968" stroke-width="8"/><rect x="42" y="58" width="19" height="28" fill="#91b6ab"/><rect x="23" y="48" width="13" height="15" fill="#b8d7eb"/>`,
 'monster':`<path d="M15 72Q2 42 24 28Q21 8 39 20Q50 2 62 20Q85 10 81 32Q99 54 85 77Q50 96 15 72Z" fill="#e4a18e"/><path d="M23 76l-7 12m60-12 8 12"/>`};let shape=shapes[k]||shapes.monster;let face=['clock','phone','laundry','paper','monster'].includes(k)?'<circle cx="40" cy="48" r="3" fill="#454b58"/><circle cx="60" cy="48" r="3" fill="#454b58"/><path d="M42 63q8-7 16 0" fill="none"/>':'';return `<svg class="art" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg"><g stroke="${ink}" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">${shape}${face}</g></svg>`}
-const itemArt=['mug','shoe','paper','headphones','laptop','coat','glasses','coin','bag','bag','shoe','watch','glasses','coat','bag','shoe','mug','coat','headphones','coin','shoe'];
+const itemArt=['mug','shoe','paper','headphones','laptop','coat','glasses','coin','bag','bag','shoe','watch','glasses','coat','bag','shoe','mug','coat','headphones','coin','shoe','coin','headphones','coat','bag','shoe','laptop'];
 const disciplines=[['Knowledge','#608bc4','📚',['Curiosity','Logic','Research','Mathematics','Critical Thinking','Study Habits','Scientific Method','Deep Focus']],['Technology','#399f9c','💻',['Computing','Google It','Programming','Debugging','Automation','Systems Thinking','CTRL+Z','Digital Mastery']],['Business','#c99839','💼',['Budgeting','Organization','Planning','Accounting','Delegation','Negotiation','Project Plan','Strategic Vision']],['Practical','#db805e','🔧',['Common Sense','Cooking','Coffee Break','Repair','Craftsmanship','Meal Prep','Duct Tape','Resourcefulness']],['Physical','#78a65f','💪',['Coordination','Walking','Power Nap','Endurance','Strength','Quick Reflexes','Second Wind','Peak Form']],['Care','#cb789d','❤️',['Empathy','Deep Breath','First Aid','Animal Care','Emotional Support','Patience','Boundaries','Compassion']],['Creativity','#a184c4','🎨',['Imagination','Drawing','Dad Joke','Storytelling','Design','Improvisation','Creative Spark','Inspiration']],['Social','#b59b64','💬',['Communication','Listening','Confidence','Networking','Respectfully, No','Public Speaking','Awkward Silence','Charisma']]];
 const abilities={ 'Google It':{d:'Exploit a weakness for 22 impact.',damage:22,cd:5},'Debugging':{d:'Fix the problem for 28 impact.',damage:28,cd:6},'Automation':{d:'Automate 40 impact.',damage:40,cd:8},'CTRL+Z':{d:'Recover 22 composure and deal 15 impact.',damage:15,heal:22,cd:9},'Research':{d:'Find a solution for 25 impact.',damage:25,cd:6},'Deep Focus':{d:'Deal 46 impact.',damage:46,cd:9},'Delegation':{d:'Get help for 36 impact.',damage:36,cd:7},'Project Plan':{d:'Deal 45 impact and recover 8 composure.',damage:45,heal:8,cd:8},'Coffee Break':{d:'Recover 24 composure.',heal:24,cd:7},'Meal Prep':{d:'Recover 33 composure.',heal:33,cd:10},'Duct Tape':{d:'Temporarily fix 43 impact.',damage:43,cd:8},'Power Nap':{d:'Recover 38 composure.',heal:38,cd:12},'Quick Reflexes':{d:'Deal 33 impact.',damage:33,cd:6},'Second Wind':{d:'Recover 45 composure and deal 12 impact.',damage:12,heal:45,cd:12},'Deep Breath':{d:'Recover 18 composure.',heal:18,cd:5},'Emotional Support':{d:'Recover 35 composure and deal 10 impact.',heal:35,damage:10,cd:9},'Dad Joke':{d:'Deal 24 emotional impact.',damage:24,cd:5},'Improvisation':{d:'Deal 42 impact.',damage:42,cd:8},'Creative Spark':{d:'Deal 54 impact.',damage:54,cd:10},'Respectfully, No':{d:'Deal 30 impact and recover 15 composure.',damage:30,heal:15,cd:7},'Awkward Silence':{d:'Deal 48 impact.',damage:48,cd:9},'Spreadsheet Sorcery':{d:'Deal 70 impact.',damage:70,cd:10},'Caffeine Alchemy':{d:'Recover 55 composure and deal 25 impact.',damage:25,heal:55,cd:12},'Duct Tape Wizardry':{d:'Deal 65 impact and recover 12 composure.',damage:65,heal:12,cd:10},'Comic Relief':{d:'Deal 50 impact and recover 30 composure.',damage:50,heal:30,cd:10}};
 const nodes=[{id:'origin',name:'You',x:0,y:0,c:'#c9a34d',cost:0,req:[],desc:'Congratulations, you exist.'}], byName={};
@@ -662,6 +669,221 @@ const offlineSkills=['Planning','Patience','Operations','Recovery Science','Syst
 offlineSkills.forEach(nm=>{const n=nodes.find(x=>x.id===byName[nm]);if(n){n.offline=1;n.desc=(n.desc||'')+' Also +1 h of progress while you are away.';}});
 
 // ======================================================================
+//  v0.16 content
+// ======================================================================
+// --- gear: 6 new everyday bases, then 4 sets x 5 slots (sets only drop as Rare or Legendary) ---
+// [name, price, impact, composure, resistance, slot, emoji, set index]
+items.push(
+ ['Lanyard of Belonging',60,1,10,1,'Accessory','🪪'],['Bike Helmet of Caution',70,0,22,2,'Head','⛑️'],['Hoodie of Invisibility',90,2,26,1,'Body','🧥'],
+ ['Multitool of Mild Usefulness',120,6,0,1,'Tool','🔧'],['Hiking Boots of Ambition',140,3,30,2,'Feet','🥾'],['Ergonomic Wrist Rest',75,2,8,2,'Accessory','🖱️']);
+const GEAR_SETS=[
+ ['Overthinker\'s Kit','Mind',['Thinking Cap','Elbow-Patch Blazer','Annotated Notebook','Pocket Protector','Library Loafers'],[['xp',.10,'+10% XP'],['ability',.12,'+12% ability impact']]],
+ ['Hustle Suit','Enterprise',['Bluetooth Earpiece','Power Suit','Smartphone of Infinite Tabs','Very Fancy Pen','Boardroom Brogues'],[['money',.10,'+10% money'],['crit',.06,'+6% crit chance']]],
+ ['Self-Care Set','Wellbeing',['Sleep Mask of Serenity','Fluffy Bathrobe','Herbal Tea Thermos','Mood Ring','Cloud Slippers'],[['hpPct',.10,'+10% composure'],['heal',.20,'+20% healing']]],
+ ['Main Character Fit','Expression',['Statement Sunglasses','Sequin Jacket','Microphone of Truth','Friendship Bracelet Stack','Light-Up Sneakers'],[['pPct',.08,'+8% impact'],['speed',.10,'+10% attack speed']]]];
+const SET_EMOJI={Head:'🧢',Body:'🧥',Tool:'🛠️',Accessory:'💍',Feet:'👞'};
+const SET_STATS={Head:[3,30,3],Body:[3,45,2],Tool:[9,0,2],Accessory:[5,15,2],Feet:[3,35,3]};
+GEAR_SETS.forEach((st,si)=>st[2].forEach((nm,k)=>{const slot=gearSlots[k],b=SET_STATS[slot];items.push([nm,400,b[0],b[1],b[2],slot,SET_EMOJI[slot],si]);}));
+const RARITY=['Common','Uncommon','Rare','Legendary'], RAR_MULT=[1,1.15,1.35,1.6], RAR_PARTS=[1,2,4,8];
+const AFFIXES={crit:['crit chance',.015,v=>'+'+(v*100).toFixed(1)+'% crit chance'],speed:['attack speed',.03,v=>'+'+Math.round(v*100)+'% attack speed'],ability:['ability impact',.05,v=>'+'+Math.round(v*100)+'% ability impact'],heal:['healing',.08,v=>'+'+Math.round(v*100)+'% healing'],xp:['XP',.04,v=>'+'+Math.round(v*100)+'% XP'],money:['money',.04,v=>'+'+Math.round(v*100)+'% money'],loot:['drops',.02,v=>'+'+Math.round(v*100)+'% gear drops'],parts:['parts',.10,v=>'+'+Math.round(v*100)+'% parts']};
+const RANK_NAMES=['','I','II','III','IV','V','VI','VII','VIII','IX','X'];
+
+// --- research (the Library): [key, name, bonus key, per level, max level, joke] ---
+const RESEARCH=[
+ ['pep','Applied Pep Talks','pPct',.02,20,'Peer-reviewed proof that "you got this" works.'],
+ ['nap','Advanced Napping','hpPct',.02,20,'Twenty minutes of science, eyes closed.'],
+ ['skin','Thick Skin Studies','dPct',.03,20,'A thorough review of not taking it personally.'],
+ ['odds','Probability for Optimists','crit',.004,20,'Statistically, things are looking up.'],
+ ['speed','Speed Reading','speed',.015,20,'Read this description faster. Faster.'],
+ ['interest','Compound Interest','money',.03,20,'Money that makes money that makes snacks.'],
+ ['learn','Learning How to Learn','xp',.02,20,'Meta, but effective.'],
+ ['gear','Gear Science','gear',.03,20,'Why shoes work, explained at length.'],
+ ['supply','Supply Chain Theory','parts',.10,15,'Where do parts come from? Now you know.'],
+ ['time','Time Management','away',.5,4,'+30 minutes of progress while you are away.']];
+
+// --- obstacle traits (v0.16): [key, label, how it works, the counter] ---
+const TRAITS={
+ steady:['Steady','No tricks.','Just hit it.'],
+ regenerate:['Regenerates','Heals 4% every 4 s.','Burst it down: abilities and crits.'],
+ shield:['Shielded','Basic hits deal 35% less.','Abilities ignore the shield.'],
+ burst:['Bursts','Double stress every 5 s.','Composure and healing.'],
+ armored:['Armored','Double armor.','Big hits: critical hits ignore armor.'],
+ evasive:['Evasive','Dodges 25% of basic hits.','Abilities never miss. Attack speed helps.'],
+ enraged:['Enraged','Hits 3% harder every 5 s.','End it fast.'],
+ draining:['Draining','Steals composure with each hit.','Resistance and healing.']};
+
+// --- job interviews: [question, [answers], best answer] ---
+const INTERVIEW=[
+ ['Where do you see yourself in five years?',['In your chair, respectfully','Somewhere with better snacks','Honestly? Still in this interview'],0],
+ ['What is your greatest weakness?',['I care too much about fonts','I am too punctual. It scares people','Stairs'],1],
+ ['Why do you want this job?',['Money, and also money','I believe in the mission. What is the mission?','My plants need a better lifestyle'],2],
+ ['How do you handle stress?',['Deep breaths and a spreadsheet','I become one with the stress','I make it a group project'],0],
+ ['Describe yourself in one word.',['Adaptable','Snack-motivated','Word'],0],
+ ['Tell me about a time you failed.',['I failed to fail once','I microwaved fish at work. Never again','I am failing right now, live'],1],
+ ['How do you work in a team?',['Like a golden retriever: enthusiastic','I bring the snacks, they bring the skills','Silently, but supportively'],1],
+ ['Any questions for us?',['Is there a nap room?','What does success look like here?','Can I bring my Support Rock?'],1],
+ ['What would your last boss say about you?',['Who?','That I always reply-all responsibly','Nothing, legally'],1],
+ ['Where did you hear about this job?',['A fortune cookie','The Life Grid','My mom'],1]];
+
+// --- home: four new rooms and three more pieces per old room ---
+rooms.push(['Garden',3,1200,'origin','#b9d99a'],['Garage',3,1500,byName['Repair'],'#c3c9cf'],['Game room',4,2600,byName['Imagination'],'#e7b7c9'],['Music room',4,3200,byName['Storytelling'],'#c9bde6']);
+// [name, room, price, craft parts, impact, composure, resistance, XP, income, art]
+furniture.push(
+ ['Beanbag of Questionable Origin',0,150,4,2,25,1,0,0,'sofa'],['Coffee Table Book Nobody Opens',0,340,8,4,10,1,.03,0,'shelf'],['Sectional of Total Surrender',0,1400,30,8,80,4,0,0,'sofa'],
+ ['Blackout Curtains of Destiny',1,220,6,0,40,2,0,0,'bed'],['Snooze-Proof Alarm Clock',1,380,9,6,0,1,.04,0,'cabinet'],['Weighted Blanket of Calm',1,1300,28,0,120,5,0,0,'bed'],
+ ['Spice Rack Nobody Organizes',2,260,7,3,20,1,0,.02,'cabinet'],['Air Fryer of Enlightenment',2,520,12,6,30,1,.04,0,'cabinet'],['Chef\'s Island of Ambition',2,1600,32,10,50,3,0,.05,'cabinet'],
+ ['Reading Nook of Hiding',3,300,8,2,30,0,.06,0,'shelf'],['Globe That Spins Too Long',3,620,13,4,0,1,.10,0,'shelf'],['Rare Book Collection',3,1800,34,6,0,2,.22,0,'shelf'],
+ ['Second Monitor of Productivity',4,340,9,6,0,1,0,.05,'desk'],['Ergonomic Throne',4,700,15,4,40,2,0,.08,'desk'],['Corner Office Window',4,2000,36,8,0,3,0,.25,'desk'],
+ ['Pegboard of Every Tool',5,360,9,6,0,3,0,0,'desk'],['3D Printer of Small Miracles',5,780,16,10,0,2,.05,0,'desk'],['Forge of Overcommitment',5,2100,38,22,0,6,0,0,'desk'],
+ ['Yoga Mat of Good Intentions',6,280,8,2,40,1,0,0,'gym'],['Rowing Machine of Regret',6,760,16,8,60,2,0,0,'gym'],['Sauna of Deep Thoughts',6,2200,40,10,120,4,0,0,'gym'],
+ ['Pottery Wheel of Feelings',7,420,10,8,20,0,.04,0,'art'],['Gallery Wall of Your Own Work',7,900,18,14,0,0,.08,0,'art'],['Spotlight of Main Character Energy',7,2400,42,26,0,0,.14,0,'art'],
+ ['Tomato Plant That Tries Its Best',8,240,6,2,30,1,0,0,'plant'],['Hammock of No Thoughts',8,600,12,0,90,1,0,0,'plant'],['Gnome Who Knows Things',8,900,16,4,0,2,.08,0,'plant'],['Greenhouse of Patience',8,1900,34,6,80,3,.06,0,'plant'],['Koi Pond of Inner Peace',8,3200,48,10,140,4,0,.05,'plant'],
+ ['Car That Mostly Starts',9,500,12,6,0,2,0,.04,'car'],['Wall of Labeled Jars',9,700,14,4,0,3,.03,0,'car'],['Classic Convertible Project',9,1800,32,12,0,3,0,.08,'car'],['Lift for Serious Repairs',9,2600,40,14,0,6,0,0,'car'],['Racing Simulator',9,3800,52,20,40,2,0,0,'car'],
+ ['Retro Arcade Cabinet',10,900,16,8,20,0,.05,0,'arcade'],['Pinball Machine of Chaos',10,1500,24,12,0,1,.06,0,'arcade'],['Ball Pit for Adults',10,2200,34,0,150,2,0,0,'arcade'],['Gaming Chair With Too Many Lights',10,3000,44,16,40,2,0,0,'arcade'],['Trophy Case of Participation',10,4400,56,10,0,0,.12,.06,'arcade'],
+ ['Ukulele of Optimism',11,800,15,6,30,0,0,0,'music'],['Drum Kit of Noise Complaints',11,1400,22,16,0,2,0,0,'music'],['Vintage Record Player',11,2400,34,4,60,0,.08,0,'music'],['Grand Piano You Can Kind of Play',11,3600,48,14,40,1,.06,0,'music'],['Recording Booth of Fame',11,5200,62,20,0,2,0,.12,'music']);
+
+GEAR_SETS.forEach((st,si)=>st[2].forEach((nm,k)=>itemArt.push(['glasses','coat',['paper','laptop','mug','headphones'][si],'watch','shoe'][k])));
+// achievements that referenced the old gear model
+achievements.forEach(a=>{ if(a[0]==='Legendary Find'){a[1]=s=>((s.stats||{}).legendary||0)>=1||s.collectedGear.some(i=>i>=16&&i<=20);a[4]=s=>Math.max((s.stats||{}).legendary||0,s.collectedGear.filter(i=>i>=16&&i<=20).length);} if(a[0]==='Upgrade Culture'){a[2]='Rank one item up to Rank V.';a[4]=s=>(s.stats||{}).maxRank||0;a[1]=s=>((s.stats||{}).maxRank||0)>=5;} });
+achievements.push(ach('Bookworm','Home & life','Finish 10 research levels in the Library.',s=>Object.values(s.research||{}).reduce((a,b)=>a+b,0),10),
+ ach('Fashion Statement','You','Wear a full 4-piece set bonus.',s=>(s.stats||{}).set4||0,1),
+ ach('Hired!','Careers','Ace a job interview.',s=>(s.stats||{}).aced||0,1));
+
+// ======================================================================
+//  v0.16 systems: gear 2.0, bonuses, research, grid variety, traits,
+//  ability ranks, job interviews
+// ======================================================================
+
+// ---------- grid revamp: the filler "+stat" nodes become a varied mix, plus keystones ----------
+const KEYSTONES = { 'advanced-2-10': ['slots', 1, '+1 Ability slot'], 'advanced-6-10': ['slots', 1, '+1 Ability slot'], 'expert-4-4': ['slots', 1, '+1 Ability slot'], 'advanced-0-10': ['rslots', 1, '+1 Research slot'], 'life9-1-0': ['rslots', 1, '+1 Research slot'] };
+const MINOR = [ // [bonus key, value per node, label]
+  ['speed', .02, v => '+' + Math.round(v * 100) + '% Attack speed'], ['crit', .005, v => '+' + (v * 100).toFixed(1) + '% Crit chance'],
+  ['ability', .04, v => '+' + Math.round(v * 100) + '% Ability impact'], ['heal', .06, v => '+' + Math.round(v * 100) + '% Healing'],
+  ['xp', .02, v => '+' + Math.round(v * 100) + '% XP'], ['money', .03, v => '+' + Math.round(v * 100) + '% Money'],
+  ['loot', .01, v => '+' + Math.round(v * 100) + '% Gear drops'], ['parts', .05, v => '+' + Math.round(v * 100) + '% Parts'],
+  ['pPct', .015, v => '+' + (v * 100).toFixed(1) + '% Impact'], ['hpPct', .02, v => '+' + Math.round(v * 100) + '% Composure']];
+const BONUS_TEXT = { speed: 'attack speed', crit: 'crit chance', ability: 'ability impact', heal: 'healing', xp: 'XP', money: 'money', loot: 'gear drops', parts: 'parts', pPct: 'impact', hpPct: 'composure', dPct: 'resistance', gear: 'gear stats', slots: 'ability slots', rslots: 'research slots', away: 'hours away' };
+(function revampGrid() {
+  const hash = str => { let h = 2166136261; for (const ch of str) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; };
+  for (const n of nodes) {
+    if (KEYSTONES[n.id]) { const [k, v, label] = KEYSTONES[n.id]; Object.assign(n, { name: label, stat: null, value: 0, bonus: [k, v], keystone: true, cost: Math.max(3, n.cost || 1), desc: 'Keystone: ' + label.toLowerCase().replace('+1 ', 'one more ') + '. Rare and powerful.' }); continue; }
+    if (!/^\+\d/.test(n.name) || n.id.startsWith('attr')) continue;
+    const h = hash(n.id) % 100, deep = n.id.startsWith('life9') || n.id.startsWith('expert') ? 1.5 : 1;
+    if (h < 42) { // stays a stat node, with some variety in size
+      const f = [.75, 1, 1, 1.25, 1.5][h % 5]; n.value = Math.max(1, Math.round(n.value * f)); n.name = n.name.replace(/^\+\d+/, '+' + n.value); continue;
+    }
+    const m = MINOR[(h - 42) % MINOR.length], v = +(m[1] * deep).toFixed(4);
+    Object.assign(n, { name: m[2](v), stat: null, value: 0, bonus: [m[0], v], desc: 'Permanent ' + m[2](v).toLowerCase() + '.' });
+  }
+})();
+let gridBonusCache = { key: '', v: {} };
+function gridBonus() {
+  const key = s.owned.length + ':' + s.owned[s.owned.length - 1]; if (gridBonusCache.key === key) return gridBonusCache.v;
+  const v = {}; for (const id of s.owned) { const n = nodeById[id]; if (n && n.bonus) v[n.bonus[0]] = (v[n.bonus[0]] || 0) + n.bonus[1]; }
+  gridBonusCache = { key, v }; return v;
+}
+
+// ---------- research (the Library) ----------
+const researchLevel = k => (s.research && s.research[k]) || 0;
+const research = bonusKey => RESEARCH.reduce((v, r) => r[2] === bonusKey ? v + researchLevel(r[0]) * r[3] : v, 0);
+const researchCost = k => Math.round(BAL.resCost * Math.pow(BAL.resCostG, researchLevel(k)));
+const researchTime = k => Math.round(BAL.resTime * Math.pow(BAL.resTimeG, researchLevel(k)) / researchSpeed());
+const researchSpeed = () => 1 + .1 * placedIn(3).length + (owned(byName['Research Methods']) ? .15 : 0) + (owned(byName['Accelerated Learning']) ? .15 : 0);
+const researchSlots = () => 1 + Math.round(bonus('rslots'));
+const libraryOpen = () => s.rooms.includes(3);
+function startResearch(k) {
+  const r = RESEARCH.find(x => x[0] === k); if (!r || !libraryOpen() || researchLevel(k) >= r[4] || s.rActive.some(a => a.k === k) || s.rActive.length >= researchSlots()) return false;
+  const c = researchCost(k); if (s.money < c) return false;
+  gearVer++; s.money -= c; s.rActive.push({ k, end: s.lifeClock + researchTime(k), dur: researchTime(k) }); return true;
+}
+function tickResearch() {
+  let done = 0;
+  for (const a of [...s.rActive]) if (s.lifeClock >= a.end) { gearVer++; s.research[a.k] = researchLevel(a.k) + 1; s.rActive.splice(s.rActive.indexOf(a), 1); done++; const r = RESEARCH.find(x => x[0] === a.k); log('Research complete: ' + r[1] + ' ' + s.research[a.k] + '.'); if (typeof notice === 'function') notice('Research complete: ' + r[1] + ' ' + s.research[a.k]); dirty = true; }
+  return done;
+}
+
+// ---------- gear 2.0: item instances that scale with your level ----------
+const newUid = () => (s.uid = (s.uid || 0) + 1);
+const isEveryday = i => i < 16 || (i >= 21 && i <= 26);
+function makeItem(b, l, r) {
+  const it = { u: newUid(), b, l: Math.max(1, Math.round(l)), r, k: 0, a: [] }, keys = Object.keys(AFFIXES);
+  for (let n = r === 3 ? 2 : r === 2 ? 1 : 0; n > 0; n--) { let key; do key = keys[Math.floor(Math.random() * keys.length)]; while (it.a.some(x => x[0] === key)); it.a.push([key, +(AFFIXES[key][1] * (.7 + Math.random() * .6) * (1 + it.l / 150)).toFixed(4)]); }
+  return it;
+}
+function itemStats(it) { const b = items[it.b], m = (1 + BAL.gearLvl * Math.log(1 + (it.l - 1) / 5)) * RAR_MULT[it.r] * (1 + BAL.rankStep * it.k) * (1 + research('gear')); return { p: b[2] * m, h: b[3] * m, d: b[4] * m }; }
+const itemScore = it => { const x = itemStats(it); return x.p / 2 + x.h / 12 + x.d + it.a.length * 3; };
+const itemSet = it => items[it.b][7] ?? null;
+const bagItem = u => s.bag.find(it => it.u === u);
+const equippedItems = () => gearSlots.map(sl => bagItem(s.equip[sl])).filter(Boolean);
+function rankCost(it) { const k = it.k + 1; return { parts: Math.ceil(k * 3 * RAR_PARTS[it.r] * (1 + it.l / 25)), money: Math.round(20 * Math.pow(k, 1.6) * (1 + it.l / 4)) }; }
+const salvageValue = it => Math.ceil((1 + it.l / 10) * RAR_PARTS[it.r] * (1 + it.k * .5) * (1 + bonus('parts')));
+function rollRarity(boss) {
+  const luck = attrEff(s.attr.luck) * .0012 + bonus('loot'), x = Math.random();
+  const leg = (boss ? .05 : .012) + luck * .25, rare = (boss ? .2 : .07) + luck, unc = .28;
+  return x < leg ? 3 : x < leg + rare ? 2 : x < leg + rare + unc ? 1 : 0;
+}
+function pickBase(r, slot) {
+  const ok = i => (!slot || items[i][5] === slot) && (r === 3 ? (i >= 16 && i <= 20) || items[i][7] != null : r === 2 ? items[i][7] != null || isEveryday(i) : isEveryday(i));
+  const pool = items.map((x, i) => i).filter(ok); return pool[Math.floor(Math.random() * pool.length)];
+}
+function addItem(it, silent) {
+  gearVer++; s.bag.push(it); if (!s.collectedGear.includes(it.b)) s.collectedGear.push(it.b); if (it.r === 3) s.stats.legendary = (s.stats.legendary || 0) + 1;
+  const sl = items[it.b][5], cur = bagItem(s.equip[sl]); if (!cur && s.autoEquip !== false) s.equip[sl] = it.u;
+  if (!silent) { log('Loot: ' + items[it.b][0] + ' (Lv ' + it.l + ' ' + RARITY[it.r] + ')'); if (typeof notice === 'function' && it.r >= 2) notice('Found ' + RARITY[it.r] + ': ' + items[it.b][0] + '!'); }
+  tidyBag(); dirty = true;
+}
+function tidyBag() {
+  const eq = new Set(Object.values(s.equip));
+  while (s.bag.length > BAL.bagMax) { let worst = null; for (const it of s.bag) if (!eq.has(it.u) && !it.lock && (!worst || itemScore(it) < itemScore(worst))) worst = it; if (!worst) break; s.parts += salvageValue(worst); s.bag.splice(s.bag.indexOf(worst), 1); }
+}
+function dropItem(boss) { const r = rollRarity(boss), it = makeItem(pickBase(r), s.level + (boss ? 2 : 0) - Math.floor(Math.random() * 3), r); addItem(it); return it; }
+function equipBestGear() { for (const sl of gearSlots) { let best = bagItem(s.equip[sl]); for (const it of s.bag) if (items[it.b][5] === sl && (!best || itemScore(it) > itemScore(best))) best = it; gearVer++; if (best) s.equip[sl] = best.u; } }
+function rankUp(u) {
+  const it = bagItem(u); if (!it || it.k >= 10) return false; const c = rankCost(it);
+  if (s.parts < c.parts || s.money < c.money) return false; gearVer++; s.parts -= c.parts; s.money -= c.money; it.k++; s.stats.maxRank = Math.max(s.stats.maxRank || 0, it.k); return true;
+}
+function salvageItem(u) { const it = bagItem(u); if (!it || Object.values(s.equip).includes(u) || it.lock) return 0; const v = salvageValue(it); gearVer++; s.parts += v; s.bag.splice(s.bag.indexOf(it), 1); return v; }
+const shopPrice = (b, r) => Math.round(items[b][1] * (1 + s.level / 10) * [1, 1.6, 0, 0][r]);
+const craftCost = r => ({ parts: Math.ceil((r === 3 ? 90 : 30) * (1 + s.level / 20)), money: Math.round((r === 3 ? 900 : 250) * (1 + s.level / 10)) });
+function setCounts() { const c = {}; for (const it of equippedItems()) { const si = itemSet(it); if (si != null) c[si] = (c[si] || 0) + 1; } return c; }
+
+// ---------- one place that adds up every secondary bonus ----------
+let bonusMemo = { t: '', v: null }, gearVer = 0;
+const placedIn = r => (Array.isArray(s.decor[r]) ? s.decor[r] : []).filter(k => furniture[k] && furniture[k][1] === r && s.furniture[k]);
+function bonus(k) {
+  const key = clock + ':' + s.owned.length + ':' + gearVer + ':' + s.bag.length;
+  if (bonusMemo.t !== key) {
+    const v = { ...gridBonus() }, add = (kk, x) => { v[kk] = (v[kk] || 0) + x; };
+    for (const it of equippedItems()) for (const [kk, x] of it.a) add(kk, x);
+    const sc = setCounts(); for (const si in sc) { const st = GEAR_SETS[si]; if (sc[si] >= 2) add(st[3][0][0], st[3][0][1]); if (sc[si] >= 4) add(st[3][1][0], st[3][1][1]); }
+    for (const r of RESEARCH) add(r[2], researchLevel(r[0]) * r[3]);
+    bonusMemo = { t: key, v };
+  }
+  return bonusMemo.v[k] || 0;
+}
+// stat points soften as you stack one stat, so mixed builds pay off
+const attrEff = n => n / (1 + n / BAL.attrSoft);
+
+// ---------- ability ranks (bought with skill points) ----------
+const abilityRank = name => (s.abilRank && s.abilRank[name]) || 0;
+const abilityRankCost = name => abilityRank(name) + 2;
+function rankAbility(name) { const c = abilityRankCost(name); if (!abilities[name] || !owned(byName[name]) || abilityRank(name) >= 5 || s.lp < c) return false; s.lp -= c; s.abilRank[name] = abilityRank(name) + 1; return true; }
+
+// ---------- migration from the v0.15 gear model ----------
+function migrateGear() {
+  if (!Array.isArray(s.bag)) s.bag = []; if (!s.equip || typeof s.equip !== 'object') s.equip = {};
+  if (!(s.gear || []).length && !Object.values(s.inventory || {}).some(q => q > 0)) return;
+  const L = Math.max(1, s.level);
+  const oldR = i => i >= 16 ? 3 : i >= 9 ? 2 : i >= 5 ? 1 : 0;
+  for (const i of (s.gear || [])) { if (!items[i]) continue; const it = makeItem(i, L, oldR(i)); it.k = Math.min(10, (s.gearLv || {})[i] || 0); s.bag.push(it); s.equip[items[i][5]] = it.u; }
+  let extra = 0; for (const [i, q] of Object.entries(s.inventory || {})) { const n = q - ((s.gear || []).includes(+i) ? 1 : 0); for (let k = 0; k < n && extra < 12; k++, extra++) s.bag.push(makeItem(+i, Math.max(1, L - 5), oldR(+i))); }
+  s.inventory = {}; s.gear = []; s.gearLv = {};
+}
+
+for (const k in abilities) abilities[k].name = k;
+const interviewXP = () => s.ivBuff && s.ivBuff.career === s.track && s.lifeClock < s.ivBuff.until ? s.ivBuff.xp : 0;
+
+// ======================================================================
 //  v0.10 core: lookups, balance, state, combat
 // ======================================================================
 const $ = id => document.getElementById(id);
@@ -689,14 +911,14 @@ const BAL = {
     { h: 450, hg: 1.75, a: 12, x: 10, m: 6, lv: 10, lv2: 40, sk: 10, sk2: 30 },
     { h: 5000, a: 38, x: 20, m: 20, lv: 35, lv2: 120, sk: 40, sk2: 110 },
     { h: 18000, a: 56, x: 50, m: 55, lv: 130, lv2: 260, sk: 100, sk2: 200 },
-    { h: 34000, a: 85, x: 95, m: 120, lv: 220, lv2: 450, sk: 150, sk2: 260 }],
+    { h: 34000, a: 85, x: 95, m: 120, lv: 220, lv2: 540, sk: 150, sk2: 280 }],
   hpG: 1.7, atkG: 1.29, xpG: 1.3, mG: 1.35, ladderTop: .65, ladderStart: .5, ladderLast: 1.3,
   xpBase: 24, xpLin: 6, xpQuad: .25, lifeXP: .4,
   mitK: 4, mitCap: .75,
   masteryLP: 2, lifeMasteryLP: 2,
   stageLP: [1, 1, 1, 1, 1], clearLP: [1, 0, 1, 0, 0], spPerLevel: 1, lpEveryLevels: 3, maxFight: 180, autoTtk: 60,
   armorK: .5, armorCap: .6, critBase: .05, critPerLuck: .004, critCap: .6, critMult: 1.75, foeCrit: .05, spread: .15,
-  trainBase: 150, trainGrowth: 1.2, offlineBase: 2,
+  trainBase: 150, trainGrowth: 1.2, offlineBase: 2, gearLvl: .6, rankStep: .08, bagMax: 30, attrSoft: 250, resCost: 150, resCostG: 1.7, resTime: 240, resTimeG: 1.4, speedCap: 1,
 };
 // every career you can unlock with core skills alone is Entry tier, so nothing you can discover early starts at Specialist difficulty
 function careerTier(i) { if (!i) return 0; if (careerTierOf[i]) return careerTierOf[i]; if (i >= 20) return 4; if (i >= 13 && i <= 17) return 3; return 1; }
@@ -712,14 +934,14 @@ const LIFE_UNLOCKS = {
   training: ['Training', 'Reach level 30', s => s.level >= 30 || (s.training.p + s.training.h + s.training.d) > 0] };
 const lifeOpen = k => LIFE_UNLOCKS[k][2](s);
 // v0.15: progress while away, capped by skills on the grid
-const offlineCap = () => (BAL.offlineBase + s.owned.filter(id => nodeById[id]?.offline).length) * 3600;
+const offlineCap = () => (BAL.offlineBase + s.owned.filter(id => nodeById[id]?.offline).length + bonus('away')) * 3600;
 
 // ---------------- state ----------------
-const SAVE_KEY = 'lifeUnlocked-v15';
-const fresh = () => ({ xp: 0, level: 1, lp: 3, money: 0, owned: ['origin'], equipped: [], career: 0, stage: 0, unlocked: 0, auto: true, autoNext: true, paused: false, gear: [], home: 0, inventory: {}, parts: 0, wins: 0, track: 0, progress: {}, retry: 0, last: Date.now(), discovered: [], rooms: [], furniture: {}, decor: {}, furnitureFinds: 0, pets: {}, activePet: null, businesses: {}, collectedGear: [], collectedFurniture: [], achievements: [], presets: [null, null, null], gearLv: {}, goalCareer: 0, training: { p: 0, h: 0, d: 0 }, retryTarget: null, lossStreak: 0, patience: 24, look: { skin: 1, hair: 0, hairColor: 0, outfit: -1 }, sp: 0, attr: { drive: 0, resil: 0, grit: 0, luck: 0 }, practice: null, practiceEnemy: null, stats: { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: 0, look: 0, awayStages: 0 }, playTime: 0, history: [], lifeSeen: null, tut: 0, tipsSeen: [], version: 15 });
+const SAVE_KEY = 'lifeUnlocked-v16';
+const fresh = () => ({ xp: 0, level: 1, lp: 3, money: 0, owned: ['origin'], equipped: [], career: 0, stage: 0, unlocked: 0, auto: true, autoNext: true, paused: false, gear: [], home: 0, inventory: {}, parts: 0, wins: 0, track: 0, progress: {}, retry: 0, last: Date.now(), discovered: [], rooms: [], furniture: {}, decor: {}, furnitureFinds: 0, pets: {}, activePet: null, businesses: {}, collectedGear: [], collectedFurniture: [], achievements: [], presets: [null, null, null], gearLv: {}, goalCareer: 0, training: { p: 0, h: 0, d: 0 }, retryTarget: null, lossStreak: 0, patience: 24, look: { skin: 1, hair: 0, hairColor: 0, outfit: -1 }, sp: 0, attr: { drive: 0, resil: 0, grit: 0, luck: 0 }, practice: null, practiceEnemy: null, stats: { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: 0, look: 0, awayStages: 0 }, playTime: 0, history: [], lifeSeen: null, tut: 0, tipsSeen: [], bag: [], equip: {}, research: {}, rActive: [], lifeClock: 0, abilRank: {}, interviewed: [], uid: 0, autoEquip: true, version: 16 });
 let s = fresh();
 try {
-  const keys = [SAVE_KEY, 'lifeUnlocked-v13', 'lifeUnlocked-v12', 'lifeUnlocked-v11', 'lifeUnlocked-v10', 'lifeUnlocked-v09', 'lifeUnlocked-v08', 'lifeUnlocked-v07', 'lifeUnlocked-v06', 'lifeUnlocked-v05', 'lifeUnlocked-v04', 'lifeUnlocked-v03'];
+  const keys = [SAVE_KEY, 'lifeUnlocked-v15', 'lifeUnlocked-v13', 'lifeUnlocked-v12', 'lifeUnlocked-v11', 'lifeUnlocked-v10', 'lifeUnlocked-v09', 'lifeUnlocked-v08', 'lifeUnlocked-v07', 'lifeUnlocked-v06', 'lifeUnlocked-v05', 'lifeUnlocked-v04', 'lifeUnlocked-v03'];
   let raw = null; for (const k of keys) { const v = localStorage.getItem(k); if (v) { raw = JSON.parse(v); break; } }
   if (raw && Array.isArray(raw.owned) && Array.isArray(raw.equipped) && Array.isArray(raw.gear)) { s = { ...fresh(), ...raw }; migrateStatPoints(raw); }
 } catch { }
@@ -740,6 +962,8 @@ function sanitize() {
   if (s.prevCareer == null) s.prevCareer = 0;
   s.stats = { crits: 0, bigHit: 0, bosses: 0, clutch: 0, practice: 0, defeats: 0, earned: Math.floor(s.money || 0), look: 0, awayStages: 0, ...(s.stats || {}) };
   if (s.tut === undefined || s.tut === null) s.tut = s.owned.length > 1 || s.level > 1 ? -1 : 0; if (!Array.isArray(s.tipsSeen)) s.tipsSeen = [];
+  migrateGear(); s.research ||= {}; s.rActive ||= []; s.lifeClock ||= s.playTime || 0; s.abilRank ||= {}; s.interviewed ||= []; s.equip ||= {};
+  for (const r in s.decor) if (!Array.isArray(s.decor[r])) s.decor[r] = s.decor[r] == null ? [] : [s.decor[r]];
   s.playTime ||= 0; if (!Array.isArray(s.history)) s.history = []; if (!Array.isArray(s.lifeSeen)) s.lifeSeen = Object.keys(LIFE_UNLOCKS).filter(k => LIFE_UNLOCKS[k][2](s));
   s.achievements = s.achievements.filter(n => achievements.some(a => a[0] === n));
   if (s.seenDisc === undefined) s.seenDisc = s.discovered.filter(i => i > 0).length;
@@ -748,7 +972,7 @@ sanitize();
 const owned = id => s.owned.includes(id);
 const skillCount = () => s.owned.length - 1;
 const qualifies = c => c[3].every(n => owned(byName[n]));
-const slots = () => Math.min(5, 2 + Math.floor((s.level - 1) / 7));
+const slots = () => Math.min(5, 2 + Math.floor((s.level - 1) / 7)) + Math.round(bonus('slots'));
 const available = n => !owned(n.id) && (!n.master || s.progress[n.master]?.mastered) && (n.all ? n.req.every(owned) : n.req.some(owned));
 const masteredCount = () => Object.keys(s.progress).filter(i => +i > 0 && s.progress[i].mastered).length;
 const progress = () => s.progress[s.track] ?? (s.progress[s.track] = { stage: 0, unlocked: 0, mastered: false, wins: 0 });
@@ -780,44 +1004,56 @@ function bossGate(t) {
   return { lv: Math.round(T.lv + r * ((T.lv2 ?? T.lv) - T.lv)), sk: Math.round(T.sk + r * ((T.sk2 ?? T.sk) - T.sk)) };
 }
 function isGated(t, j) { if (!t) return false; const E = trackEnemies(t); if (j !== E.length - 1) return false; const g = bossGate(t); return s.level < g.lv || skillCount() < g.sk; }
-function mechanic(e, j = s.stage) { const n = e[0].toLowerCase(); if (/scroll|email|inbox|meeting|rush|hydra/.test(n)) return 'regenerate'; if (/paper|exam|code|bug|tax|requirement|scope/.test(n)) return 'shield'; if (/alarm|deadline|outage|crisis|monday/.test(n)) return 'burst'; return ['steady', 'regenerate', 'shield', 'burst'][j % 4]; }
-const mechanicText = { steady: 'Steady', regenerate: 'Regenerates 4% every 4s', shield: 'Shielded: basic hits −35%', burst: 'Double stress every 5s' };
+function mechanic(e, j = s.stage) {
+  const n = e[0].toLowerCase();
+  if (/scroll|email|inbox|meeting|hydra|subscription/.test(n)) return 'regenerate';
+  if (/paper|exam|code|bug|tax|requirement|scope/.test(n)) return 'shield';
+  if (/alarm|deadline|outage|crisis|monday/.test(n)) return 'burst';
+  if (/security|vault|wall|fortress|tower|bureaucra|audit|armor|ledger/.test(n)) return 'armored';
+  if (/phone|squirrel|pigeon|cat\b|ferret|mystery|ghost|missing|lost|hiding/.test(n)) return 'evasive';
+  if (/boss|rush|rage|stampede|frenzy|surge|chaos/.test(n)) return 'enraged';
+  if (/drain|bill|debt|doom|vampire|leech|fee|overdraft/.test(n)) return 'draining';
+  const t = e[6] ? careers.findIndex(c => c[0] === e[6]) : 0, pool = t > 0 && careerTier(t) >= 2 ? ['steady', 'regenerate', 'shield', 'burst', 'armored', 'evasive', 'enraged', 'draining'] : ['steady', 'regenerate', 'shield', 'burst'];
+  return pool[(j + Math.max(0, t)) % pool.length];
+}
+const mechanicText = Object.fromEntries(Object.entries(TRAITS).map(([k, t]) => [k, k === 'steady' ? 'Steady' : t[0] + ': ' + t[1].replace(/\.$/, '')]));
+let luckyUntil = -1;
 
 // ---------------- bonuses ----------------
-function homeBonus() { const b = { p: 0, h: 0, d: 0, xp: 0, income: 0 }; for (const [r, i] of Object.entries(s.decor)) { const f = furniture[i]; if (!f || !s.rooms.includes(+r) || !s.furniture[i] || f[1] !== +r) continue; b.p += f[4]; b.h += f[5]; b.d += f[6]; b.xp += f[7]; b.income += f[8]; } if (owned('home-skill-3')) b.income += .05; return b; }
+function homeBonus() { const b = { p: 0, h: 0, d: 0, xp: 0, income: 0 }; for (const r of s.rooms) for (const i of placedIn(r)) { const f = furniture[i]; b.p += f[4]; b.h += f[5]; b.d += f[6]; b.xp += f[7]; b.income += f[8]; } if (owned('home-skill-3')) b.income += .05; return b; }
 function petBonus() { const i = s.activePet, p = pets[i], l = s.pets[i] || 0; return p && l ? { p: p[3] * l, h: p[4] * l, d: p[5] * l, heal: p[6] * l } : { p: 0, h: 0, d: 0, heal: 0 }; }
 function perkValue(k) { let v = 0; for (const id of s.owned) { const n = nodeById[id]; if (n && n.perk && n.perk[0] === k) v += n.perk[1]; } return v; }
 function masteryPerks() { const r = { xp: 0, power: 0, income: 0, loot: 0, hp: 0, heal: 0, ability: 0, business: 0 }; for (const k in s.progress) { const i = +k; if (i > 0 && careers[i] && s.progress[k].mastered) { const [kind, v] = careerPerk(i); if (kind === 'all') { r.power += v; r.hp += v; } else r[kind] += v; } } return r; }
-const gearMult = i => 1 + .2 * (s.gearLv[i] || 0);
+
 // money sink: permanent training with rising cost
 const TRAINING = [['p', 'Impact training', .03, 'impact'], ['h', 'Composure training', .03, 'composure'], ['d', 'Resistance training', .04, 'resistance']];
 const trainingCost = k => Math.round(BAL.trainBase * Math.pow(BAL.trainGrowth, s.training[k] || 0));
-const gearUpgradeCost = i => Math.round(items[i][1] * Math.pow(2, (s.gearLv[i] || 0) + 1));
+
 // core stats bought with stat points (1 per level)
 const ATTRS = [['drive', 'Drive', 'impact', 2], ['resil', 'Resilience', 'composure', 12], ['grit', 'Grit', 'resistance', 1], ['luck', 'Luck', 'crit chance', .004]];
 function statParts() {
   const z = () => ({ p: 0, h: 0, d: 0 }), P = { base: { p: 8, h: 100, d: 0 }, grid: z(), points: z(), gear: z(), home: z(), pet: z(), career: { p: careers[s.career][4], h: 0, d: 0 } };
   for (const id of s.owned) { const n = nodeById[id]; if (!n || !n.stat) continue; if (n.stat === 'power') P.grid.p += n.value; else if (n.stat === 'hp') P.grid.h += n.value; else if (n.stat === 'def') P.grid.d += n.value; }
-  P.points = { p: s.attr.drive * ATTRS[0][3], h: s.attr.resil * ATTRS[1][3], d: s.attr.grit * ATTRS[2][3] };
-  for (const i of s.gear) { const m = gearMult(i); P.gear.p += items[i][2] * m; P.gear.h += items[i][3] * m; P.gear.d += items[i][4] * m; }
+  P.points = { p: attrEff(s.attr.drive) * ATTRS[0][3], h: attrEff(s.attr.resil) * ATTRS[1][3], d: attrEff(s.attr.grit) * ATTRS[2][3] };
+  for (const it of equippedItems()) { const x = itemStats(it); P.gear.p += x.p; P.gear.h += x.h; P.gear.d += x.d; }
   const home = s.home || 0, b = homeBonus(), pet = petBonus(), hm = 1 + perkValue('home'), pm = 1 + perkValue('pet'), mp = masteryPerks(), tr = s.training;
   P.home = { p: home * 2 + b.p * hm, h: home * 25 + b.h * hm, d: home + b.d * hm };
   P.pet = { p: pet.p * pm, h: pet.h * pm, d: pet.d * pm };
-  P.mult = { p: (1 + mp.power) * (1 + .03 * tr.p), h: (1 + mp.hp) * (1 + .03 * tr.h), d: 1 + .04 * tr.d };
+  P.mult = { p: (1 + mp.power + bonus('pPct')) * (1 + .03 * tr.p) * (luckyUntil > clock ? 2 : 1), h: (1 + mp.hp + bonus('hpPct')) * (1 + .03 * tr.h), d: (1 + bonus('dPct')) * (1 + .04 * tr.d) };
   return P;
 }
 const STAT_SOURCES = [['base', 'Starting stats'], ['grid', 'Life Grid'], ['points', 'Stat points'], ['gear', 'Gear'], ['home', 'Home'], ['pet', 'Companion'], ['career', 'Current career']];
 function stats() {
   const P = statParts(); let p = 0, h = 0, d = 0;
   for (const [k] of STAT_SOURCES) { p += P[k].p; h += P[k].h; d += P[k].d; }
-  const luck = s.attr.luck;
-  return { p: Math.round(p * P.mult.p), h: Math.round(h * P.mult.h), d: Math.round(d * P.mult.d), luck, crit: Math.min(BAL.critCap, BAL.critBase + luck * BAL.critPerLuck), critMult: BAL.critMult };
+  const luck = attrEff(s.attr.luck);
+  return { p: Math.round(p * P.mult.p), h: Math.round(h * P.mult.h), d: Math.round(d * P.mult.d), luck, crit: Math.min(BAL.critCap, BAL.critBase + luck * BAL.critPerLuck + bonus('crit')), critMult: BAL.critMult, speed: Math.min(BAL.speedCap, bonus('speed')) };
 }
-function abilityDamage(a, st = stats()) { return a.damage ? Math.round(a.damage * (.6 + st.p / 20) * (1 + masteryPerks().ability)) : 0; }
-function abilityHeal(a, st = stats()) { return a.heal ? Math.round(a.heal * (.5 + st.h / 200) * (1 + masteryPerks().heal)) : 0; }
+function abilityDamage(a, st = stats()) { return a.damage ? Math.round(a.damage * (.6 + st.p / 20) * (1 + masteryPerks().ability + bonus('ability')) * (1 + .2 * abilityRank(a.name))) : 0; }
+function abilityHeal(a, st = stats()) { return a.heal ? Math.round(a.heal * (.5 + st.h / 200) * (1 + masteryPerks().heal + bonus('heal')) * (1 + .2 * abilityRank(a.name))) : 0; }
 function incomingDamage(atk, def) { const mit = Math.min(BAL.mitCap, def / (def + BAL.mitK * atk + 10)); return atk * (1 - mit); }
 // obstacles have armor: it softens small hits more than big ones
-const armorOf = e => e[8] ?? Math.round(e[3] * BAL.armorK);
+const armorOf = e => (e[8] ?? Math.round(e[3] * BAL.armorK)) * (mechanic(e, curMechIndex()) === 'armored' ? 2 : 1);
 function mitigate(raw, armor) { return raw * (1 - Math.min(BAL.armorCap, armor / (armor + 2 * raw + 10))); }
 const roll = (spread = BAL.spread) => 1 - spread + Math.random() * spread * 2;
 function careerRank(i) { const p = s.progress[i] || {}; return p.mastered ? 5 : Math.min(4, Math.floor((p.unlocked || 0) / 1.5)); }
@@ -825,22 +1061,25 @@ const rankNames = ['Newcomer', 'Apprentice', 'Skilled', 'Veteran', 'Expert', 'Ma
 function businessCost(i) { return Math.ceil(careers[i][2] * 25 * Math.pow(2, s.businesses[i] || 0)); }
 function businessIncome() { return Object.entries(s.businesses).reduce((sum, [i, l]) => sum + (careers[i]?.[2] || 0) * .35 * l, 0) * (1 + perkValue('business') + masteryPerks().business); }
 function careerPay(i) { return careers[i][2] * (1 + careerRank(i) * .15); }
-function income() { return careerPay(s.career) * (1 + homeBonus().income + perkValue('income') + masteryPerks().income) + businessIncome(); }
+function income() { return (careerPay(s.career) * (1 + homeBonus().income + perkValue('income') + masteryPerks().income) + businessIncome()) * (1 + bonus('money')); }
 function xpNeed() { const L = s.level - 1; return Math.round(BAL.xpBase + BAL.xpLin * L + BAL.xpQuad * L * L); }
-function gainXP(n) { s.xp += Math.round(n * (1 + homeBonus().xp + perkValue('xp') + masteryPerks().xp)); while (s.xp >= xpNeed()) { s.xp -= xpNeed(); s.level++; s.sp += BAL.spPerLevel; const bonus = s.level % BAL.lpEveryLevels === 0; if (bonus) s.lp++; log('Level ' + s.level + '! +' + BAL.spPerLevel + ' stat point' + (bonus ? ' and +1 skill point.' : '.')); fx('level'); dirty = true; } }
+function gainXP(n) { s.xp += Math.round(n * (1 + homeBonus().xp + perkValue('xp') + masteryPerks().xp + bonus('xp') + interviewXP())); while (s.xp >= xpNeed()) { s.xp -= xpNeed(); s.level++; s.sp += BAL.spPerLevel; const bonus = s.level % BAL.lpEveryLevels === 0; if (bonus) s.lp++; log('Level ' + s.level + '! +' + BAL.spPerLevel + ' stat point' + (bonus ? ' and +1 skill point.' : '.')); fx('level'); dirty = true; } }
 // Everyday Life pays a skill point per stage; careers pay on their 1st and 3rd first clears (66 careers would otherwise flood the grid)
 const stageLP = (t, j) => t ? BAL.stageLP[careerTier(t)] * (BAL.clearLP[j] ?? 0) : BAL.stageLP[0];
 
 // ---------------- forecasts & guidance ----------------
 function battleForecast(e, j, over) {
-  const st = over || stats(), m = mechanic(e, j), A = armorOf(e), cm = 1 + st.crit * (st.critMult - 1);
-  let dps = mitigate(st.p * (m === 'shield' ? .65 : 1), A) * cm + s.equipped.reduce((v, n) => v + mitigate(abilityDamage(abilities[n], st), A) * cm / abilities[n].cd, 0);
+  const st = over || stats(), m = mechanic(e, j), A = (e[8] ?? Math.round(e[3] * BAL.armorK)) * (m === 'armored' ? 2 : 1), sp = 1 + (st.speed || 0);
+  const hitAvg = raw => m === 'armored' ? mitigate(raw, A) * (1 - st.crit) + raw * st.crit * st.critMult : mitigate(raw, A) * (1 + st.crit * (st.critMult - 1));
+  let dps = hitAvg(st.p * (m === 'shield' ? .65 : 1)) * sp * (m === 'evasive' ? .75 : 1) + s.equipped.reduce((v, n) => v + hitAvg(abilityDamage(abilities[n], st)) * sp / abilities[n].cd, 0);
+  const inc0 = incomingDamage(e[3], st.d);
   if (m === 'regenerate') dps -= e[2] * .01;
-  const healps = s.equipped.reduce((v, n) => v + abilityHeal(abilities[n], st) / abilities[n].cd, 0) + petBonus().heal / 10;
+  if (m === 'draining') dps -= inc0 * 1.5;
+  const healps = s.equipped.reduce((v, n) => v + abilityHeal(abilities[n], st) * sp / abilities[n].cd, 0) + petBonus().heal / 10;
   const ttk = dps > 0 ? e[2] / dps : Infinity;
-  const taken = ttk * (incomingDamage(e[3], st.d) * (1 + BAL.foeCrit * .5) * (m === 'burst' ? 1.2 : 1) - healps);
+  const taken = ttk * (inc0 * (1 + BAL.foeCrit * .5) * (m === 'burst' ? 1.2 : 1) * (m === 'enraged' ? 1 + .03 * Math.min(ttk, 180) / 10 : 1) - healps);
   const ready = Math.max(0, Math.min(1, ttk > 0 ? BAL.maxFight * .8 / ttk : 1, taken > 0 ? st.h * .85 / taken : 1));
-  return { ttk, ok: taken < st.h * .85 && ttk <= BAL.maxFight * .8, xps: e[4] / Math.max(1, Math.ceil(ttk)), ready };
+  return { ttk, ok: taken < st.h * .85 && ttk <= BAL.maxFight * .8, xps: e[4] / Math.max(1, Math.ceil(ttk)), ready, dps, taken, inc: inc0, healps };
 }
 function unlockedTracks() { return careers.map((c, i) => i).filter(i => i === 0 || qualifies(careers[i])); }
 function suggestNext() {
@@ -964,11 +1203,9 @@ function leavePractice() { s.practice = null; s.practiceEnemy = null; }
 
 function resetBattle() { hp = stats().h; ehp = curEnemy()[2]; cool = {}; clock = 0; dirty = true; }
 function loot() {
-  const tier = s.stage + (s.track ? careerTier(s.track) * 2 : 0);
-  const pool = items.map((a, i) => i).filter(i => i < 9 || i < 16 && tier >= 2 || i >= 16 && tier >= 5);
-  const luckBonus = s.attr.luck * .001;
-  if (Math.random() < (s.practice == null && s.stage === enemies.length - 1 ? .45 : .18) + perkValue('loot') + masteryPerks().loot + luckBonus) { const i = pool[Math.floor(Math.random() * pool.length)]; s.inventory[i] = (s.inventory[i] || 0) + 1; log('Loot: ' + items[i][0] + ' (' + rarity(i) + ')'); notice('Found ' + items[i][0] + '!'); dirty = true; }
-  if (Math.random() < .35) { s.parts++; dirty = true; }
+  const boss = s.practice == null && s.stage === enemies.length - 1;
+  if (Math.random() < (boss ? .45 : .14) + perkValue('loot') + masteryPerks().loot + bonus('loot') + attrEff(s.attr.luck) * .001) dropItem(boss);
+  if (Math.random() < .35) { s.parts += Math.max(1, Math.round((1 + s.level / 40) * (1 + bonus('parts')))); dirty = true; }
 }
 function furnitureLoot() { if (Math.random() < (s.practice == null && s.stage === enemies.length - 1 ? .09 : .025)) { const pool = furniture.map((f, i) => i).filter(i => i % 2 === 0 || s.stage >= 3); const i = pool[Math.floor(Math.random() * pool.length)]; s.furniture[i] = (s.furniture[i] || 0) + 1; s.furnitureFinds++; log('Furniture found: ' + furniture[i][0]); dirty = true; } }
 function win() {
@@ -1014,21 +1251,21 @@ function tick() {
   const now = Date.now(), gap = s.lastActive ? (now - s.lastActive) / 1000 : 0; s.lastActive = now;
   if (gap > 5 && !s.paused) s.awayBank = (s.awayBank || 0) + gap - 1; // throttled background tab or sleeping device
   if (s.paused) return;
-  const e = curEnemy(), st = stats(), A = armorOf(e); clock++;
+  const e = curEnemy(), st = stats(), A = armorOf(e), sp = 1 + (st.speed || 0); clock++; s.lifeClock++; if (s.rActive.length && clock % 5 === 0) tickResearch();
   const pay = income() / 60; s.money += pay; s.stats.earned += pay; s.playTime++; if (s.playTime % 600 === 0) logHistory('tick');
   const pb = petBonus();
   if (clock % 10 === 0 && pb.heal && hp < st.h) { const h = Math.round(pb.heal * (1 + perkValue('pet'))); hp = Math.min(st.h, hp + h); fx('heal', h); }
   const mech = mechanic(e, curMechIndex());
   if (mech === 'regenerate' && clock % 4 === 0) ehp = Math.min(e[2], ehp + Math.ceil(e[2] * .04));
-  const c1 = Math.random() < st.crit;
-  const basic = mitigate(st.p * (mech === 'shield' ? .65 : 1) * roll(), A) * (c1 ? st.critMult : 1);
-  ehp -= basic; fx('basic', basic, c1); if (c1) s.stats.crits++; if (basic > s.stats.bigHit) s.stats.bigHit = Math.round(basic);
+  const c1 = Math.random() < st.crit, miss = mech === 'evasive' && Math.random() < .25, raw = st.p * (mech === 'shield' ? .65 : 1) * roll() * sp;
+  const basic = miss ? 0 : (c1 && mech === 'armored' ? raw : mitigate(raw, A)) * (c1 ? st.critMult : 1);
+  ehp -= basic; if (miss) fx('miss'); else fx('basic', basic, c1); if (c1) s.stats.crits++; if (basic > s.stats.bigHit) s.stats.bigHit = Math.round(basic);
   for (const name of s.equipped) {
     const a = abilities[name]; if (!a) continue;
-    cool[name] = Math.max(0, (cool[name] || 0) - 1);
+    cool[name] = Math.max(0, (cool[name] || 0) - sp);
     if (cool[name] === 0 && (a.damage || hp < st.h * .8)) {
       const c2 = a.damage && Math.random() < st.crit;
-      const dmg = a.damage ? mitigate(abilityDamage(a, st) * roll(.1), A) * (c2 ? st.critMult : 1) : 0, heal = Math.round(abilityHeal(a, st) * roll(.1));
+      const dmg = a.damage ? (c2 && mech === 'armored' ? abilityDamage(a, st) * roll(.1) : mitigate(abilityDamage(a, st) * roll(.1), A)) * (c2 ? st.critMult : 1) : 0, heal = Math.round(abilityHeal(a, st) * roll(.1));
       ehp -= dmg; hp = Math.min(st.h, hp + heal); cool[name] = a.cd; if (c2) s.stats.crits++; if (dmg > s.stats.bigHit) s.stats.bigHit = Math.round(dmg);
       log(name + '!' + (dmg ? ' ' + fmt(dmg) + ' impact' + (c2 ? ' (critical!)' : '') + '.' : '') + (heal ? ' +' + fmt(heal) + ' composure.' : ''));
       fx('ability', dmg, name, heal, c2);
@@ -1037,8 +1274,8 @@ function tick() {
   if (ehp <= 0) win();
   else {
     const burst = mech === 'burst' && clock % 5 === 0, fc = Math.random() < BAL.foeCrit;
-    const dmg = incomingDamage(e[3], st.d) * roll() * (burst ? 2 : 1) * (fc ? 1.5 : 1);
-    hp -= dmg; fx('hurt', dmg, fc, burst);
+    const dmg = incomingDamage(e[3], st.d) * roll() * (burst ? 2 : 1) * (fc ? 1.5 : 1) * (mech === 'enraged' ? 1 + .03 * Math.floor(clock / 5) : 1);
+    hp -= dmg; if (mech === 'draining') ehp = Math.min(e[2], ehp + dmg * 1.5); fx('hurt', dmg, fc, burst);
     if (hp <= 0) { fx('ko'); onDefeat(); }
     else if (clock >= BAL.maxFight) { log(e[0] + ' outlasted you (' + BAL.maxFight + 's limit).'); fx('ko'); onDefeat(); }
   }
@@ -1083,6 +1320,7 @@ function retryNow() { if (s.retryTarget == null) return; const t = s.retryTarget
 // ---------------- v0.15 time away: money always, stages advance while the next one is safely winnable ----------------
 function awayProgress(seconds) {
   const cap = offlineCap(), t = Math.min(seconds, cap), r = { seconds, used: t, cap, money: 0, xp: 0, wins: 0, stages: 0, mastered: null, from: s.unlocked, career: s.track, lv0: s.level };
+  s.lifeClock += seconds; tickResearch();
   if (t < 60) return null;
   const m0 = s.money; s.money += t * income() / 60;
   leavePractice(); s.retry = 0; s.retryTarget = null; s.lossStreak = 0;
@@ -1254,8 +1492,9 @@ function backdropSVG(d) {
 //  Home: illustrated house that grows with the property
 // ======================================================================
 // floor (0 = ground) and side for each room index
-const ROOM_SLOTS = [[0, 0], [1, 0], [0, 1], [1, 1], [2, 0], [2, 1], [3, 0], [3, 1]];
-const floorsFor = home => [1, 2, 4, 4][home] || 1;
+const ROOM_SLOTS = [[0, 0], [1, 0], [0, 1], [1, 1], [2, 0], [2, 1], [3, 0], [3, 1], [4, 0], [4, 1], [5, 0], [5, 1]];
+const floorsFor = home => [1, 2, 4, 5, 6][home] || 1;
+const decorSlots = () => 3 + (owned('home-skill-1') ? 1 : 0);
 const WOOD = '#C99D72', INK = '#1F4744';
 function furnitureArt(r, k) {
   // drawn in a 100 × 54 box, standing on y = 54
@@ -1285,6 +1524,18 @@ function furnitureArt(r, k) {
     case 7: return premium
       ? `<g ${f}><path d="M30 4L14 54M30 4l16 50M30 4v50" /><rect x="14" y="6" width="34" height="30" fill="#FFF8E6"/><circle cx="26" cy="16" r="5" fill="#E9AB76"/><path d="M18 32l12-12 14 12" fill="#91BBA4"/><rect x="58" y="34" width="38" height="20" rx="3" fill="#E8D5B5"/><circle cx="66" cy="32" r="4" fill="#E07A5F"/><circle cx="76" cy="31" r="4" fill="#4C78B4"/><circle cx="86" cy="32" r="4" fill="#E9A23B"/></g>`
       : `<g ${f}><path d="M50 6L34 54M50 6l16 48" /><rect x="34" y="8" width="32" height="28" fill="#FFF8E6"/><circle cx="46" cy="18" r="5" fill="#E9AB76"/><path d="M38 32l10-10 14 10" fill="#91BBA4"/></g>`;
+    case 8: return premium
+      ? `<g ${f}><path d="M10 54c0-20 10-30 20-30s20 10 20 30z" fill="#8BC79B"/><path d="M30 54V30" /><rect x="56" y="34" width="36" height="20" rx="4" fill="#B78B60"/><path d="M60 34c4-14 12-18 14-18s10 4 14 18" fill="#9FD0A8"/></g>`
+      : `<g ${f}><rect x="34" y="34" width="32" height="20" rx="3" fill="#C8735A"/><path d="M50 34c-14-6-16-22-6-26 4 10 10 10 6 26M50 34c12-8 18-20 10-26-6 10-12 12-10 26" fill="#8BC79B"/></g>`;
+    case 9: return premium
+      ? `<g ${f}><path d="M6 44l8-16h50l14 16h14v10H6z" fill="#E07A5F"/><path d="M20 30h40l10 14H16z" fill="#CFE3EA"/><circle cx="24" cy="54" r="8" fill="#3E4A57"/><circle cx="76" cy="54" r="8" fill="#3E4A57"/></g>`
+      : `<g ${f}><path d="M10 46l8-14h42l12 14h14v8H10z" fill="#7896AE"/><path d="M22 34h36l8 12H18z" fill="#CFE3EA"/><circle cx="28" cy="54" r="7" fill="#3E4A57"/><circle cx="74" cy="54" r="7" fill="#3E4A57"/></g>`;
+    case 10: return premium
+      ? `<g ${f}><rect x="30" y="2" width="40" height="52" rx="4" fill="#B9A7DB"/><rect x="36" y="8" width="28" height="20" rx="2" fill="#3E4A57"/><circle cx="44" cy="38" r="4" fill="#E07A5F"/><circle cx="56" cy="38" r="4" fill="#F2C14E"/><path d="M36 46h28"/></g>`
+      : `<g ${f}><rect x="18" y="26" width="64" height="20" rx="4" fill="#7FB485"/><path d="M24 46v8M76 46v8"/><circle cx="34" cy="36" r="4" fill="#fff"/><circle cx="62" cy="34" r="4" fill="#E07A5F"/></g>`;
+    case 11: return premium
+      ? `<g ${f}><path d="M8 30h62c14 0 24 6 24 14v4H8z" fill="#3E4A57"/><rect x="8" y="22" width="40" height="8" fill="#fff"/><path d="M14 22v8M20 22v8M26 22v8M32 22v8M38 22v8M44 22v8"/><path d="M14 48v6M86 48v6"/></g>`
+      : `<g ${f}><circle cx="42" cy="38" r="14" fill="#E9AB76"/><circle cx="42" cy="38" r="4" fill="#3E4A57"/><path d="M54 32l34-24" stroke-width="5"/><path d="M86 6l6 4"/></g>`;
   }
   return '';
 }
@@ -1308,7 +1559,7 @@ function roomInterior(j, x, y, w, h, state) {
 function houseSVG() {
   const home = s.home || 0, floors = floorsFor(home), W = 360, ground = 384, FH = 82, X0 = 38, RW = 140;
   const top = ground - FH * floors, roofY = top;
-  const ghost = home < 3 ? floorsFor(home + 1) - floors : 0, vTop = ground - FH * (floors + ghost) - 78, vH = 440 - vTop;
+  const ghost = home < homeNames.length - 1 ? floorsFor(home + 1) - floors : 0, vTop = ground - FH * (floors + ghost) - 78, vH = 440 - vTop;
   const parts = [];
   // sky, sun, hills
   parts.push(`<rect y="${vTop}" width="${W}" height="${vH}" fill="#DCEBE3"/><circle cx="312" cy="${vTop + 40}" r="20" fill="#F6D27A"/><path d="M40 ${vTop + 54}q8-14 22-8 8-12 22-2 14 0 12 10H40z" fill="#fff" opacity=".85"/><path d="M236 ${vTop + 86}q6-10 16-6 6-8 16 0 10 0 8 7h-40z" fill="#fff" opacity=".8"/>`);
@@ -1326,13 +1577,13 @@ function houseSVG() {
   const rx = side => X0 + side * (RW + 8), ry = floor => ground - FH * (floor + 1) + 4;
   rooms.forEach((r, j) => {
     const [floor, side] = ROOM_SLOTS[j]; if (floor >= floors) return;
-    const x = rx(side), y = ry(floor), w = RW, h = FH - 8, built = s.rooms.includes(j), f = s.decor[j];
+    const x = rx(side), y = ry(floor), w = RW, h = FH - 8, built = s.rooms.includes(j), pl = placedIn(j), f = pl.length ? pl[0] : undefined;
     const needHome = home < r[1], needSkill = !owned(r[3]);
     const state = built ? (f === undefined ? 'empty' : 'furnished') : needHome || needSkill ? 'locked' : 'build';
-    const label = state === 'furnished' ? furniture[f][0] : state === 'empty' ? 'Empty · tap to furnish' : state === 'build' ? 'Build · $' + r[2] : 'Needs ' + (needHome ? homeNames[r[1]] : nodeById[r[3]].name);
+    const label = state === 'furnished' ? furniture[f][0] + (pl.length > 1 ? ' and ' + (pl.length - 1) + ' more' : '') : state === 'empty' ? 'Empty · tap to furnish' : state === 'build' ? 'Build · $' + r[2] : 'Needs ' + (needHome ? homeNames[r[1]] : nodeById[r[3]].name);
     const act = built ? `data-act="roomSheet" data-arg="${j}"` : state === 'build' ? `data-act="buildRoom" data-arg="${j}"` : '';
     let g = `<g class="hroom ${state}" ${act} ${act ? 'role="button" tabindex="0"' : ''} aria-label="${esc(r[0])}: ${esc(label)}">` + roomInterior(j, x, y, w, h, state);
-    if (state === 'furnished') g += `<g transform="translate(${x + 46} ${y + h - 13 - 42 + 3}) scale(.78)">${furnitureArt(j, f)}</g>`;
+    if (state === 'furnished') { g += `<g transform="translate(${x + 46} ${y + h - 13 - 42 + 3}) scale(.78)">${furnitureArt(j, f)}</g>`; pl.slice(1, 3).forEach((k, n) => { g += `<g transform="translate(${n ? x + 112 : x + 6} ${y + h - 13 - 26}) scale(.42)">${furnitureArt(j, k)}</g>`; }); }
     if (state === 'empty') g += `<rect x="${x + 40}" y="${y + h - 46}" width="62" height="30" rx="6" fill="none" stroke="${INK}" stroke-opacity=".35" stroke-width="2" stroke-dasharray="5 4"/><text x="${x + 71}" y="${y + h - 27}" text-anchor="middle" font-size="18" font-weight="800" fill="${INK}" opacity=".5">+</text>`;
     if (state === 'build') g += `<rect x="${x + 24}" y="${y + h / 2 - 2}" width="${w - 48}" height="26" rx="13" fill="${s.money >= r[2] ? INK : '#9FB0BC'}"/><text x="${x + w / 2}" y="${y + h / 2 + 15}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">Build · $${fmt(r[2])}</text>`;
     if (state === 'locked') g += `<g transform="translate(${x + w / 2 - 8} ${y + 26})"><rect x="1" y="7" width="14" height="10" rx="2" fill="none" stroke="#5F84A2" stroke-width="2"/><path d="M4 7V4a4 4 0 0 1 8 0v3" fill="none" stroke="#5F84A2" stroke-width="2"/></g><text x="${x + w / 2}" y="${y + 58}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#5F84A2">${esc(label.length > 24 ? label.slice(0, 23) + '…' : label)}</text>`;
@@ -1355,8 +1606,9 @@ function houseSVG() {
   return `<svg class="housesvg" viewBox="0 ${vTop} ${W} ${vH}" role="group" aria-label="${esc(homeNames[home])} with ${s.rooms.length} rooms built">${parts.join('')}</svg>`;
 }
 function roomCard(j) {
-  const f = s.decor[j], built = s.rooms.includes(j);
-  return `<svg viewBox="0 0 160 82" style="width:100%;height:auto;max-height:200px;border-radius:16px;display:block" aria-hidden="true">${roomInterior(j, 0, 0, 160, 82, built ? (f === undefined ? 'empty' : 'furnished') : 'build')}${f !== undefined ? `<g transform="translate(${(160 - 100) / 2 + 12} ${82 - 13 - 54 + 6})">${furnitureArt(j, f)}</g>` : ''}</svg>`;
+  const pl = placedIn(j), built = s.rooms.includes(j), f = pl[0];
+  const extras = pl.slice(1).map((k, n) => `<g transform="translate(${[4, 118, 4][n]} ${[82 - 13 - 30, 82 - 13 - 30, 26][n]}) scale(.42)">${furnitureArt(j, k)}</g>`).join('');
+  return `<svg viewBox="0 0 160 82" style="width:100%;height:auto;max-height:200px;border-radius:16px;display:block" aria-hidden="true">${roomInterior(j, 0, 0, 160, 82, built ? (f === undefined ? 'empty' : 'furnished') : 'build')}${f !== undefined ? `<g transform="translate(${(160 - 100) / 2 + 12} ${82 - 13 - 54 + 6}) scale(.85)">${furnitureArt(j, f)}</g>` : ''}${extras}</svg>`;
 }
 
 // ======================================================================
@@ -1431,7 +1683,7 @@ function playStatsText() {
   const hrs = x => (x / 3600).toFixed(2) + ' h';
   const ms = s.history.filter(x => x.k.startsWith('mastery')).map(x => `${hrs(x.t)}  lv ${x.lv}  ${x.mc} mastered  (${careers[+x.k.split(':')[1]]?.[0] || 'Everyday Life'})`);
   const tl = s.history.filter(x => x.k === 'tick').filter((x, i, a) => i % Math.max(1, Math.ceil(a.length / 24)) === 0).map(x => `${hrs(x.t)}  lv ${x.lv}  ${x.mc} mastered  ${x.disc} discovered  ${x.sk} skills`);
-  return [`Life, Unlocked v0.15.1 play stats`, `Played: ${hrs(s.playTime)} (plus time away)`, `Level ${s.level} · ${masteredCount()} of ${careers.length - 1} careers mastered · ${s.discovered.filter(i => i > 0).length} discovered · ${skillCount()} skills · ${s.achievements.length} achievements`, `Wins ${fmt(s.wins)} · defeats ${s.stats.defeats} · stages cleared while away ${s.stats.awayStages}`, `Current job: ${careers[s.career][0]}`, '', 'Masteries:', ...(ms.length ? ms : ['(none yet)']), '', 'Timeline:', ...(tl.length ? tl : ['(play 10 minutes for a timeline)'])].join('\n');
+  return [`Life, Unlocked v0.16 play stats`, `Played: ${hrs(s.playTime)} (plus time away)`, `Level ${s.level} · ${masteredCount()} of ${careers.length - 1} careers mastered · ${s.discovered.filter(i => i > 0).length} discovered · ${skillCount()} skills · ${s.achievements.length} achievements`, `Wins ${fmt(s.wins)} · defeats ${s.stats.defeats} · stages cleared while away ${s.stats.awayStages}`, `Current job: ${careers[s.career][0]}`, '', 'Masteries:', ...(ms.length ? ms : ['(none yet)']), '', 'Timeline:', ...(tl.length ? tl : ['(play 10 minutes for a timeline)'])].join('\n');
 }
 let awayReport = null, showPath = false, youView = 'points', ngArmed = false, ngTimer = null;
 function copyOut(text, ok, fallbackId) { const done = () => notice(ok), fail = () => { const t = $(fallbackId); if (t) { t.value = text; t.select(); } notice('Copy was blocked. The text is selected: press Ctrl+C or Cmd+C.'); }; try { navigator.clipboard ? navigator.clipboard.writeText(text).then(done, fail) : fail(); } catch { fail(); } }
@@ -1443,7 +1695,7 @@ function resetGame() {
   log('Congratulations, you exist.'); notice('New game started. Welcome to the world!'); setScreen('battle'); renderAll(); save();
 }
 let screen = 'battle', lifeView = 'home', careerFilter = 'all', sheetKind = null, sheetArg = null;
-const homeNames = ['Borrowed couch', 'Starter apartment', 'Cozy home', 'Dream home'], homePrices = [120, 450, 1500];
+const homeNames = ['Borrowed couch', 'Starter apartment', 'Cozy home', 'Dream home', 'Dream estate'], homePrices = [120, 450, 1500, 9000];
 const visibleScreens = () => desktopMQ.matches ? ['battle', screen === 'battle' ? 'grid' : screen] : [screen];
 const isVisible = name => visibleScreens().includes(name);
 const sig = {};
@@ -1459,16 +1711,17 @@ function notice(t) { const el = $('toast'); if (!el) return; el.textContent = t;
 // ---------------- v0.15.1: first-run tutorial (Rocky the Support Rock) and first-visit tips ----------------
 const TIPS = {
   battle: ['Battle', ['Fights run by themselves. Your abilities fire whenever they are ready.', 'Tap a stage dot to replay an earlier obstacle, for example to farm XP.', '"Switch job" changes which career\'s obstacles you face.']],
-  grid: ['Life Grid', ['Every skill costs skill points (the gold diamonds). You can learn skills next to ones you already have.', 'Symbols: ★ ability · ◆ gateway · % perk · + stat boost.', 'Tap the Next career bar to light up a path, or use search to find any skill.']],
+  grid: ['Life Grid', ['Every skill costs skill points (the gold diamonds). You can learn skills next to ones you already have.', 'Symbols: ★ ability · ◆ gateway · % bonus (speed, crits, XP…) · + stat boost · ⬢ keystone (extra ability or research slot).', 'Tap the Next career bar to light up a path, or use search to find any skill.']],
   careers: ['Careers', ['Each career needs certain skills. It has 6 stages, and the last one is a boss.', 'Beat the boss to master it: bonus skill points plus a permanent perk.', '"Not ready yet" cards tell you exactly what you\'re missing.']],
   you: ['You', ['You get a stat point every level. Drive adds impact, Resilience composure, Grit resistance and Luck critical hits.', 'Resetting your stat points is free, so experiment.', 'Sources shows where every stat comes from. Gear and Look are here too.']],
   'you:sources': ['Where your stats come from', ['Every row adds to your three core stats.', 'Perks and training multiply the total, so they get better as you grow.']],
-  'you:gear': ['Gear', ['Gear drops in battle. Equip one item per slot.', 'Salvage spares for parts, and upgrade favourites: +20% per level.', 'Buy or craft more in the Shop on the Life tab.']],
+  'you:gear': ['Gear', ['Gear drops at your level, so new drops keep up with you. Rare items roll bonus stats.', 'Rank items up with parts and money: +8% per rank, up to Rank X.', 'Wear 2 or 4 pieces of a set for set bonuses. Salvage spares for parts.']],
   'you:look': ['Your look', ['Purely cosmetic, purely fabulous.', '"Match career" makes your outfit follow your job.']],
   life: ['Your life', ['Your home, companions, businesses and training unlock as you grow.', 'Rooms and furniture give permanent stats, so they are worth the money.', 'Spare cash? This is where it goes.']],
   'life:shop': ['Shop', ['Buy gear with money, or craft it with parts from salvaged items.', 'Rarer gear has bigger stats. Legendary items drop from bosses.']],
   'life:pets': ['Companions', ['Only your active companion helps in battle, but every rank makes it stronger.', 'Some companions need a skill from the Grid first.']],
   'life:business': ['Businesses', ['Master a career to open its business.', 'Businesses earn money every minute, even while you are away.']],
+  'life:research': ['Library', ['Start a project and it runs on its own, even while you are away.', 'Each level is a permanent bonus. Later levels take longer.', 'Library furniture and study skills speed research up. Keystones on the Grid add research slots.']],
   'life:training': ['Training', ['Each course is a permanent percentage boost.', 'Prices rise 20% per course, so this is where late-game money goes.']],
   journal: ['Journal', ['Achievements give +1 skill point each, and locked ones show your progress.', 'Settings has save, export, feedback, play stats, Replay tutorial and Start over.', '"How to play" has all the rules in one place.']]};
 let tipKeyShown = null;
@@ -1517,6 +1770,40 @@ function placeCoach() {
 }
 (function coachLoop() { if (tutActive()) placeCoach(); requestAnimationFrame(coachLoop); })();
 addEventListener('resize', placeCoach);
+
+
+// ---------------- v0.16: Lucky Breaks (tap the bubble) and job interviews ----------------
+let nextLucky = 120 + Math.random() * 120, luckyTimer = null;
+function luckyCheck() {
+  if (luckyTimer || tutActive() || !isVisible('battle') || document.hidden || s.lifeClock < nextLucky) return;
+  const el = document.createElement('button'); el.className = 'lucky'; el.id = 'luckyBtn'; el.dataset.act = 'lucky'; el.setAttribute('aria-label', 'Lucky Break! Tap to claim');
+  el.innerHTML = '<span>' + icon('sparkle', 22, '#7A4B07') + '</span><b>Lucky Break!</b>'; el.style.top = (18 + Math.random() * 40) + '%';
+  $('scene').append(el); luckyTimer = setTimeout(() => { el.remove(); luckyTimer = null; nextLucky = s.lifeClock + 150 + Math.random() * 150; }, 12000);
+}
+function claimLucky() {
+  const el = $('luckyBtn'); if (!el) return; el.remove(); clearTimeout(luckyTimer); luckyTimer = null; nextLucky = s.lifeClock + 150 + Math.random() * 150;
+  const roll = Math.random(); s.stats.lucky = (s.stats.lucky || 0) + 1;
+  if (roll < .45) { luckyUntil = clock + 30; notice('Lucky Break: double impact for 30 seconds!'); }
+  else if (roll < .8) { const m = Math.max(25, income() * 3); s.money += m; s.stats.earned += m; notice('Lucky Break: found ' + money$(m) + ' in an old coat!'); }
+  else { const p = Math.round(5 + s.level / 4); s.parts += p; notice('Lucky Break: +' + p + ' parts from a yard sale!'); }
+  fx('win'); dirty = true;
+}
+let interview = null;
+function maybeInterview(i) {
+  if (!i || tutActive() || s.interviewed.includes(i) || interview) return;
+  const pool = INTERVIEW.map((q, k) => k).sort(() => Math.random() - .5).slice(0, 3);
+  interview = { career: i, qs: pool, step: 0, score: 0, last: null }; openSheet('interview');
+}
+function interviewAnswer(k) {
+  if (!interview) return; const q = INTERVIEW[interview.qs[interview.step]], good = k === q[2];
+  if (good) interview.score++; interview.last = good ? ['Nailed it.', 'The interviewer nods slowly. Impressive.', 'They wrote something down. Probably good.'][interview.step] : ['Bold choice.', 'The interviewer blinks twice.', 'They are smiling. Politely.'][interview.step];
+  interview.step++;
+  if (interview.step >= interview.qs.length) {
+    const sc = interview.score; s.interviewed.push(interview.career); s.ivBuff = { career: interview.career, until: s.lifeClock + 600, xp: .1 * sc + (sc === 3 ? .1 : 0) };
+    if (sc === 3) s.stats.aced = (s.stats.aced || 0) + 1;
+  }
+  renderSheet();
+}
 
 // ---------------- trophy popup: one celebration per achievement, queued; bursts collapse into one card ----------------
 let trophyQueue = [], trophyTimer = null;
@@ -1579,6 +1866,7 @@ function fx(kind, amount, name, heal) {
   if (kind === 'level') { bump('lvRing', 'pop'); return; }
   if (!fxOn()) return;
   const r = () => Math.random() * 10 - 5;
+  if (kind === 'miss') { spawn('Miss!', 'small', 72 + r(), 46 + r()); bump('heroArt', 'atk'); return; }
   if (kind === 'basic') { spawn((name ? 'Crit −' : '−') + fmt(amount), name ? 'crit' : 'small', 72 + r(), 46 + r()); bump('heroArt', 'atk'); setTimeout(() => bump('enemyArt', 'hit'), 110); }
   else if (kind === 'ability') pendingFx.push({ amount, name, heal, crit: arguments[4] });
   else if (kind === 'heal') spawn('+' + fmt(amount), 'heal', 22 + r(), 42 + r());
@@ -1629,7 +1917,7 @@ function renderBattle() {
     $('scene').dataset.region = s.track ? careerTier(s.track) % 4 : 0;
     const m = mechanic(e, curMechIndex());
     $('foeStats').innerHTML = `${icon('bolt', 13)} ${fmt(e[3])} attack · ${icon('shield', 13)} ${fmt(armorOf(e))} armor${prac ? ' · practice' : ''}`;
-    $('mech').innerHTML = (m === 'shield' ? icon('shield', 14) : m === 'burst' ? icon('bolt', 14) : m === 'regenerate' ? icon('repeat', 14) : icon('target', 14)) + mechanicText[m];
+    $('mech').innerHTML = (m === 'shield' || m === 'armored' ? icon('shield', 14) : m === 'burst' || m === 'enraged' ? icon('bolt', 14) : m === 'regenerate' || m === 'draining' ? icon('repeat', 14) : icon('target', 14)) + mechanicText[m]; $('mech').title = TRAITS[m][1] + ' Counter: ' + TRAITS[m][2];
   }
   if (changed('abil', [s.equipped, slots(), s.level])) {
     const total = 5; let h = '';
@@ -1659,6 +1947,7 @@ function renderNudge() {
   if (changed('nudge', h)) $('nudge').innerHTML = h;
 }
 function hudTick() {
+  luckyCheck();
   flushFx();
   const st = stats(), e = curEnemy();
   $('hpText').textContent = `${fmt(Math.max(0, hp))}/${fmt(st.h)}`;
@@ -1727,6 +2016,7 @@ function labelPos(n, r) {
 function nodeClass(n, pathSet) {
   let c = 'nd ' + (owned(n.id) ? 'own' : available(n) ? 'avail' : 'lock');
   if (n.id === selected) c += ' sel';
+  if (n.keystone) c += ' keystone'; else if (n.bonus) c += ' minor';
   if (pathSet.has(n.id)) c += ' path';
   if (n.id === 'origin' || n.id.startsWith('entry')) c += ' major';
   return c;
@@ -1736,7 +2026,7 @@ function updateMap() {
   const g = showPath ? nextGoal() : null, pathSet = new Set(g ? g.path : []), keySet = new Set(g ? careers[g.career][3].map(nm => byName[nm]).filter(id => !owned(id)) : []);
   for (const n of nodes) {
     const ref = MAP.nodes[n.id], c = nodeClass(n, pathSet) + (keySet.has(n.id) ? ' key' : '');
-    if (ref.cls !== c) { ref.g.setAttribute('class', c); ref.cls = c; ref.mk.textContent = owned(n.id) ? '✓' : n.master || n.all ? '◆' : n.ability ? '★' : n.perk ? '%' : '+'; }
+    if (ref.cls !== c) { ref.g.setAttribute('class', c); ref.cls = c; ref.mk.textContent = owned(n.id) ? '✓' : n.keystone ? '⬢' : n.master || n.all ? '◆' : n.ability ? '★' : n.perk || n.bonus ? '%' : '+'; }
   }
   for (const e of MAP.edges) {
     const oa = owned(e.a), ob = owned(e.b), on = oa && ob, path = (pathSet.has(e.a) && (pathSet.has(e.b) || ob)) || (pathSet.has(e.b) && oa);
@@ -1806,7 +2096,7 @@ function nodeDesc(n) {
 }
 function renderNodeSheet() {
   const n = nodeById[selected] || nodes[0], o = owned(n.id), av = available(n), g = showPath ? nextGoal() : null;
-  const kind = n.ability ? 'Active ability' : n.id === 'origin' ? 'Start' : n.master ? 'Gateway' : n.perk ? 'Perk' : n.id.startsWith('attr') ? 'Attribute' : 'Passive';
+  const kind = n.keystone ? 'Keystone' : n.bonus ? 'Bonus' : n.ability ? 'Active ability' : n.id === 'origin' ? 'Start' : n.master ? 'Gateway' : n.perk ? 'Perk' : n.id.startsWith('attr') ? 'Attribute' : 'Passive';
   const unlocks = careers.map((c, i) => i && !qualifies(c) && c[3].some(nm => byName[nm] === n.id) ? c[0] : null).filter(Boolean);
   const h = `<div class="handle"></div><div class="spread"><h2 style="font-size:20px;color:${shade(discColor(nodeDiscipline(n)))}">${esc(n.name)}${o ? ' ' + icon('check', 18, '#2F6F68', 3).replace('<svg', '<svg style="display:inline;vertical-align:-2px"') : ''}</h2><span class="chip small">${kind}${n.value && n.stat ? ' · +' + n.value + ' ' + ({ power: 'Impact', hp: 'Composure', def: 'Resistance' })[n.stat] : ''}</span></div>
   <p>${esc(nodeDesc(n))}${unlocks.length ? ` Helps unlock <b>${esc(unlocks.join(', '))}</b>.` : ''}${g && g.path.includes(n.id) ? ' On the path to <b>' + esc(careers[g.career][0]) + '</b>.' : ''}</p>
@@ -1873,19 +2163,19 @@ function renderCareers() {
 function affordKey(prices) { return prices.filter(p => p <= s.money).length; }
 function renderLife() {
   const el = $('scr-life');
-  const prices = [...items.map(a => a[1]), ...furniture.map(f => f[2]), ...rooms.map(r => r[2]), ...homePrices, ...pets.map((p, i) => p[1] * ((s.pets[i] || 0) + 1)), ...careers.map((c, i) => i ? businessCost(i) : 0), ...s.gear.map(gearUpgradeCost), ...TRAINING.map(([k]) => trainingCost(k))];
-  if (!changed('life', [lifeView, affordKey(prices), s.parts, s.inventory, s.gear, s.gearLv, s.home, s.rooms, s.furniture, s.decor, s.pets, s.activePet, s.businesses, s.owned.length, masteredCount(), s.training, s.look, s.career])) return;
-  keepScroll(el, () => el.innerHTML = lifeView === 'home' ? lifeHome() : lifeView === 'gear' ? lifeGear() : lifeView === 'shop' ? lifeShop() : lifeView === 'pets' ? lifePets() : lifeView === 'training' ? lifeTraining() : lifeView === 'look' ? lifeLook() : lifeBusiness());
+  const prices = [...items.map((a, i) => isEveryday(i) ? shopPrice(i, 0) : 0), ...furniture.map(f => f[2]), ...rooms.map(r => r[2]), ...homePrices, ...pets.map((p, i) => p[1] * ((s.pets[i] || 0) + 1)), ...careers.map((c, i) => i ? businessCost(i) : 0), ...equippedItems().map(it => rankCost(it).money), ...TRAINING.map(([k]) => trainingCost(k))];
+  if (!changed('life', [lifeView, lifeView === 'research' ? Math.floor(s.lifeClock / 5) : 0, s.rActive.length, JSON.stringify(s.research), affordKey(prices), s.parts, s.bag.length, gearVer, s.home, s.rooms, s.furniture, s.decor, s.pets, s.activePet, s.businesses, s.owned.length, masteredCount(), s.training, s.look, s.career])) return;
+  keepScroll(el, () => el.innerHTML = lifeView === 'research' ? lifeResearch() : lifeView === 'home' ? lifeHome() : lifeView === 'gear' ? lifeGear() : lifeView === 'shop' ? lifeShop() : lifeView === 'pets' ? lifePets() : lifeView === 'training' ? lifeTraining() : lifeView === 'look' ? lifeLook() : lifeBusiness());
 }
 const sub = title => `<div class="subhead"><button class="iconbtn" data-act="life" data-arg="home" aria-label="Back to Life">${icon('back', 20)}</button><h1>${title}</h1></div>`;
 const statLine = (p, h, d, extra = []) => [p && '+' + fmt(p) + ' impact', h && '+' + fmt(h) + ' composure', d && '+' + fmt(d) + ' resistance', ...extra].filter(Boolean).join(' · ');
 function lifeHome() {
   const i = s.home || 0, b = homeBonus(), hm = 1 + perkValue('home');
   const pet = s.activePet !== null && s.pets[s.activePet] ? s.activePet : null;
-  const spare = Object.keys(s.inventory).filter(k => s.inventory[k] > 0 && !s.gear.includes(+k)).length;
+  const spare = s.bag.filter(it => { const cur = bagItem(s.equip[items[it.b][5]]); return !cur || (cur !== it && itemScore(it) > itemScore(cur)); }).length;
   const lockTile = (k, title) => `<div class="ltile locked"><h2>${title}</h2>${icon('lock', 28, '#8A7F6C')}<small>Unlocks: ${esc(LIFE_UNLOCKS[k][1].toLowerCase())}</small></div>`;
   const ev = s.progress[0] || {};
-  return `<div class="gridhead"><h1>Your life</h1></div>${lifeOpen('home') ? `<div class="muted" style="font-size:13px;font-weight:700;margin-top:-6px">${homeNames[i]} · ${s.rooms.length} of 8 rooms · tap a room to build or furnish it</div>
+  return `<div class="gridhead"><h1>Your life</h1></div>${lifeOpen('home') ? `<div class="muted" style="font-size:13px;font-weight:700;margin-top:-6px">${homeNames[i]} · ${s.rooms.length} of ${rooms.filter(r => r[1] <= (s.home || 0)).length} rooms · tap a room to build or furnish it</div>
   <section class="house">${houseSVG()}
   <div class="bonuses"><span class="chip">${statLine(Math.round(i * 2 + b.p * hm), Math.round(i * 25 + b.h * hm), Math.round(i + b.d * hm)) || 'No home bonuses yet'}</span>${b.xp ? `<span class="chip">+${Math.round(b.xp * 100)}% XP</span>` : ''}${b.income ? `<span class="chip">+${Math.round(b.income * 100)}% income</span>` : ''}</div>
   ${i < 3 ? `<div style="text-align:center;margin-top:10px"><button class="btn primary" data-act="homeUp" ${s.money < homePrices[i] ? 'disabled' : ''}>${icon('up', 18)}Move to ${homeNames[i + 1]} · $${fmt(homePrices[i])}</button><div class="muted" style="font-size:12px;font-weight:700;margin-top:6px">${['Adds a second floor and three rooms', 'Adds two floors and the gym', 'Unlocks the art studio, a blue roof and a garden'][i]}</div></div>` : ''}</section>
@@ -1893,6 +2183,7 @@ function lifeHome() {
   <div class="tiles">
    ${!lifeOpen('pets') ? lockTile('pets', 'Companion') : `<button class="ltile" data-act="life" data-arg="pets"><h2>Companion</h2>${pet !== null ? petArt(pet).replace('width="65" height="65"', 'width="44" height="40"') : icon('pet', 32, '#8A7F6C')}<small>${pet !== null ? pets[pet][0] + ' · Rank ' + s.pets[pet] : 'Adopt a companion'}</small></button>`}
    ${!lifeOpen('business') ? lockTile('business', 'Businesses') : `<button class="ltile" data-act="life" data-arg="business"><h2>Businesses</h2><span class="big">$${businessIncome().toFixed(1)}/min</span><small>${Object.keys(s.businesses).length} open · master careers for more</small></button>`}
+   ${!libraryOpen() ? `<div class="ltile locked"><h2>Library</h2>${icon('lock', 28, '#8A7F6C')}<small>Unlocks: build the Library room</small></div>` : `<button class="ltile" data-act="life" data-arg="research"><h2>Library</h2>${icon('grid', 30, '#2F6F68')}<small>${s.rActive.length ? s.rActive.length + ' researching' : 'Start a research project'}</small></button>`}
    ${!lifeOpen('training') ? lockTile('training', 'Training') : `<button class="ltile" data-act="life" data-arg="training"><h2>Training</h2><span class="big">${s.training.p + s.training.h + s.training.d} courses</span><small>Turn spare money into permanent stats</small></button>`}
    <button class="ltile" data-act="life" data-arg="shop"><h2>Shop</h2>${icon('shop', 30, '#2F6F68')}<small>${items.filter(a => a[1] <= s.money).length} items affordable</small></button>
   </div>`;
@@ -1906,18 +2197,48 @@ function lifeLook() {
    <h3>Outfit</h3><div class="swatches"><button class="btn small ${L.outfit < 0 ? 'primary' : ''}" data-act="look" data-arg="outfit:-1" aria-pressed="${L.outfit < 0}">Match career</button>${OUTFITS.map((c, i) => sw('outfit', i, L.outfit === i, c, 'Outfit colour ' + (i + 1))).join('')}</div>
    <p class="muted" style="font-size:12px;font-weight:700">Your career still adds its accessory, like glasses for research or a headset for tech.</p></div></div>`;
 }
+function itemCard(it, mode) {
+  const b = items[it.b], x = itemStats(it), eq = Object.values(s.equip).includes(it.u), cur = bagItem(s.equip[b[5]]), si = itemSet(it);
+  const diff = !eq && cur ? Math.round((itemScore(it) / Math.max(1, itemScore(cur)) - 1) * 100) : null, c = rankCost(it);
+  const aff = it.a.map(([k, v]) => `<span class="chip small">${AFFIXES[k][2](v)}</span>`).join('') + (si != null ? `<span class="chip small gold">${esc(GEAR_SETS[si][0])}</span>` : '');
+  const head = `${picture(itemArt[it.b] || 'bag', b[0], 42)}<div class="body"><b>${esc(b[0])}</b><small><span class="rarity ${RARITY[it.r]}">${RARITY[it.r]}</span> ${b[5]} · Lv ${it.l}${it.k ? ' · Rank ' + RANK_NAMES[it.k] : ''}${diff !== null ? ` · <b style="color:${diff > 0 ? '#2F6F68' : '#9A3412'}">${diff > 0 ? '+' : ''}${diff}%</b>` : ''}</small><small>${statLine(Math.round(x.p), Math.round(x.h), Math.round(x.d))}</small>${aff ? `<div class="row" style="flex-wrap:wrap;gap:4px;margin-top:4px">${aff}</div>` : ''}</div>`;
+  if (mode === 'slot') return `<div class="item gearslot">${head}<div class="acts"><button class="btn small primary" data-act="rankUp" data-arg="${it.u}" ${it.k >= 10 || s.parts < c.parts || s.money < c.money ? 'disabled' : ''}>${it.k >= 10 ? 'Max rank' : `Rank up · ${fmt(c.parts)} parts + ${money$(c.money)}`}</button></div></div>`;
+  return `<div class="item">${head}<div class="acts"><button class="btn small" data-act="equipItem" data-arg="${it.u}" ${eq ? 'disabled' : ''}>${eq ? 'Equipped' : 'Equip'}</button>${eq ? '' : `<button class="btn small ghost" data-act="salvageItem" data-arg="${it.u}">Salvage · +${salvageValue(it)}</button>`}</div></div>`;
+}
 function lifeGear() {
-  const slotsHtml = gearSlots.map(slot => {
-    const i = s.gear.find(k => items[k][5] === slot);
-    if (i === undefined) return `<div class="slot emptyslot"><b>${slot}</b><small>Empty</small></div>`;
-    const a = items[i], m = gearMult(i), lv = s.gearLv[i] || 0, cost = gearUpgradeCost(i);
-    return `<div class="slot"><div class="row">${picture(itemArt[i], a[0], 42)}<div style="min-width:0"><b style="font-size:13px">${esc(a[0])}</b><small>${slot} · Level ${lv}</small></div></div><small>${statLine(Math.round(a[2] * m), Math.round(a[3] * m), Math.round(a[4] * m))}</small><div class="row"><button class="btn small" data-act="upgrade" data-arg="${i}" ${lv >= 10 || s.money < cost ? 'disabled' : ''}>${lv >= 10 ? 'Max level' : 'Upgrade · ' + money$(cost)}</button><button class="btn small ghost" data-act="unequip" data-arg="${i}">Remove</button></div></div>`;
-  }).join('');
-  const inv = Object.entries(s.inventory).filter(([i, q]) => q > 0).map(([i, q]) => { i = +i; const a = items[i], eq = s.gear.includes(i); return `<div class="item">${picture(itemArt[i], a[0], 42)}<div class="body"><b>${esc(a[0])} ×${q}</b><small><span class="rarity ${rarity(i)}">${rarity(i)}</span> ${a[5]} · ${statLine(a[2], a[3], a[4])}</small></div><div class="acts"><button class="btn small" data-act="equip" data-arg="${i}" ${eq ? 'disabled' : ''}>${eq ? 'Equipped' : 'Equip'}</button><button class="btn small ghost" data-act="salvage" data-arg="${i}" ${q <= (eq ? 1 : 0) ? 'disabled' : ''}>Salvage</button></div></div>`; }).join('');
-  return `<div class="slots">${slotsHtml}</div><div class="sechead"><h2>Inventory</h2><span class="chip">${s.parts} parts</span></div><p class="muted" style="font-size:13px;margin-bottom:8px">Gear drops in battle. Salvage spares for parts; upgrades add 20% per level.</p><div class="list">${inv || '<p class="muted">No items yet. Keep battling!</p>'}</div><div style="margin-top:10px"><button class="btn small" data-act="openShop">${icon('shop', 16)}Buy or craft gear in the Shop</button></div>`;
+  const sc = setCounts(), sets = Object.entries(sc).map(([si, n]) => { const st = GEAR_SETS[si]; return `<span class="chip small ${n >= 2 ? 'gold' : ''}">${esc(st[0])} ${n}/5${n >= 2 ? ' · ' + st[3][0][2] : ''}${n >= 4 ? ' · ' + st[3][1][2] : ''}</span>`; }).join('');
+  const slotsHtml = gearSlots.map(sl => { const it = bagItem(s.equip[sl]); return it ? itemCard(it, 'slot') : `<div class="item emptyslot"><div class="body"><b>${sl}</b><small>Empty. Gear drops in battle, or buy some in the Shop.</small></div></div>`; }).join('');
+  const bag = s.bag.filter(it => !Object.values(s.equip).includes(it.u)).sort((a, b) => gearSlots.indexOf(items[a.b][5]) - gearSlots.indexOf(items[b.b][5]) || itemScore(b) - itemScore(a));
+  const worse = bag.filter(it => { const cur = bagItem(s.equip[items[it.b][5]]); return cur && itemScore(it) <= itemScore(cur); });
+  return `<p class="muted" style="font-size:13px;margin:0 0 8px">Gear drops at your level. Rank items up with parts and money (+${Math.round(BAL.rankStep * 100)}% per rank, up to Rank X). Rare items roll bonus stats; set pieces add bonuses at 2 and 4 pieces.</p>
+  ${sets ? `<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px">${sets}</div>` : ''}<div class="list">${slotsHtml}</div>
+  <div class="sechead"><h2>Bag · ${s.bag.length}/${BAL.bagMax}</h2><span class="chip">${fmt(s.parts)} parts</span></div>
+  <div class="row" style="flex-wrap:wrap;margin-bottom:8px"><button class="btn small" data-act="equipBest">Equip best</button><button class="btn small ghost" data-act="salvageWorse" ${worse.length ? '' : 'disabled'}>Salvage ${worse.length} weaker · +${fmt(worse.reduce((v, it) => v + salvageValue(it), 0))} parts</button><button class="btn small" data-act="openShop">${icon('shop', 16)}Shop</button></div>
+  <div class="list">${bag.map(it => itemCard(it)).join('') || '<p class="muted">Nothing spare. When the bag is full, the weakest spare item is salvaged automatically.</p>'}</div>`;
+}
+function hms(x) { x = Math.max(0, Math.round(x)); const h = Math.floor(x / 3600), m = Math.floor(x % 3600 / 60), sec = x % 60; return h ? h + 'h ' + m + 'm' : m ? m + 'm ' + sec + 's' : sec + 's'; }
+function lifeResearch() {
+  const slotsN = researchSlots(), act = s.rActive;
+  const fmtB = (k, v) => k === 'away' ? '+' + v + ' h away' : k === 'crit' ? '+' + (v * 100).toFixed(1) + '% crit' : '+' + Math.round(v * 100) + '% ' + BONUS_TEXT[k];
+  return sub('Library') + `<p class="muted" style="font-size:13px;margin-bottom:8px">Research runs on its own, even while you are away. ${act.length}/${slotsN} projects running · speed ×${researchSpeed().toFixed(2)} (Library furniture and study skills make it faster).</p><div class="list">${RESEARCH.map(r => {
+    const lv = researchLevel(r[0]), a = act.find(x => x.k === r[0]), max = lv >= r[4], c = researchCost(r[0]);
+    const pr = a ? Math.min(1, 1 - (a.end - s.lifeClock) / a.dur) : 0;
+    return `<div class="item"><div class="body"><b>${esc(r[1])} · ${lv}/${r[4]}</b><small>${lv ? 'Now ' + fmtB(r[2], lv * r[3]) + ' · ' : ''}${max ? 'Fully researched' : 'Next level: ' + fmtB(r[2], r[3])}</small><small class="muted" style="font-style:italic">${esc(r[5])}</small>${a ? `<div class="achmeter"><i style="width:${(pr * 100).toFixed(1)}%"></i></div><small>${hms(a.end - s.lifeClock)} left</small>` : ''}</div><div class="acts">${a ? '<span class="chip small">Researching</span>' : max ? '<span class="chip small gold">Done</span>' : `<button class="btn small primary" data-act="research" data-arg="${r[0]}" ${s.money < c || act.length >= slotsN ? 'disabled' : ''}>${money$(c)} · ${hms(researchTime(r[0]))}</button>`}</div></div>`; }).join('')}</div>`;
+}
+function combatPanel() {
+  const e = curEnemy(), st = stats(), f = battleForecast(e, curMechIndex()), m = mechanic(e, curMechIndex());
+  const rows = [['Impact per second', fmt(Math.max(0, f.dps))], ['Time to win', isFinite(f.ttk) ? Math.ceil(f.ttk) + 's' : 'never'], ['Stress taken per second', fmt(f.inc)], ['Healing per second', fmt(f.healps)], ['Crit chance', (st.crit * 100).toFixed(1) + '%'], ['Attack speed', '+' + Math.round((st.speed || 0) * 100) + '%'], ['Ability impact', '+' + Math.round((masteryPerks().ability + bonus('ability')) * 100) + '%'], ['Ability slots', slots()]];
+  const extra = Object.entries(BONUS_TEXT).filter(([k]) => !['speed', 'crit', 'ability', 'slots', 'rslots', 'pPct', 'hpPct', 'dPct'].includes(k) && bonus(k)).map(([k, t]) => `<span class="chip small">${k === 'away' ? '+' + bonus(k) + ' h' : '+' + Math.round(bonus(k) * 100) + '%'} ${t}</span>`).join('');
+  return `<section class="card" style="margin-bottom:12px"><div class="spread"><b>Combat vs ${esc(e[0])}</b><span class="chip small">${esc(TRAITS[m][0])}</span></div><small class="muted">${esc(TRAITS[m][1])} Counter: ${esc(TRAITS[m][2])}</small><div style="display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin-top:8px;font-size:14px">${rows.map(([a, b]) => `<span>${a}</span><b>${b}</b>`).join('')}</div>${extra ? `<div class="row" style="flex-wrap:wrap;gap:4px;margin-top:8px">${extra}</div>` : ''}</section>`;
 }
 function lifeShop() {
-  return sub('Shop') + `<p class="muted" style="font-size:13px;margin-bottom:8px">Bought and crafted items go to your gear. Parts: ${s.parts}</p><div class="list">${items.map((a, i) => { const pc = Math.ceil(a[1] / 25); return `<div class="item">${picture(itemArt[i], a[0], 42)}<div class="body"><b>${esc(a[0])}</b><small><span class="rarity ${rarity(i)}">${rarity(i)}</span> ${a[5]} · ${statLine(a[2], a[3], a[4])}</small></div><div class="acts"><button class="btn small" data-act="buy" data-arg="${i}" ${s.money < a[1] ? 'disabled' : ''}>$${fmt(a[1])}</button><button class="btn small ghost" data-act="craft" data-arg="${i}" ${s.parts < pc ? 'disabled' : ''}>Craft · ${pc}</button></div></div>`; }).join('')}</div>`;
+  const ev = items.map((a, i) => i).filter(isEveryday), cc2 = craftCost(2), cc3 = craftCost(3), can = c => s.parts >= c.parts && s.money >= c.money;
+  return sub('Shop') + `<p class="muted" style="font-size:13px;margin-bottom:8px">Everything here is level ${s.level}, your level. Parts: ${fmt(s.parts)}</p>
+  <div class="card" style="display:grid;gap:8px"><b>Craft</b><small class="muted">Rare items roll one bonus stat, Legendary two.</small>
+   <div class="row" style="flex-wrap:wrap">${gearSlots.map(sl => `<button class="btn small" data-act="craftRare" data-arg="${sl}" ${can(cc2) ? '' : 'disabled'}>Rare ${sl}</button>`).join('')}</div><small class="muted">${fmt(cc2.parts)} parts + ${money$(cc2.money)} each</small>
+   <div class="row" style="flex-wrap:wrap"><button class="btn small primary" data-act="craftLegend" ${can(cc3) ? '' : 'disabled'}>Legendary (random) · ${fmt(cc3.parts)} parts + ${money$(cc3.money)}</button></div>
+   <b style="margin-top:4px">Set pieces (Rare)</b>${GEAR_SETS.map((st, si) => `<div><small><b>${esc(st[0])}</b> · 2 pieces: ${st[3][0][2]} · 4 pieces: ${st[3][1][2]}</small><div class="row" style="flex-wrap:wrap;margin-top:4px">${gearSlots.map(sl => `<button class="btn small ghost" data-act="craftSet" data-arg="${si}:${sl}" ${can(cc2) ? '' : 'disabled'}>${sl}</button>`).join('')}</div></div>`).join('')}</div>
+  <div class="sechead"><h2>Buy</h2></div><div class="list">${ev.map(i => { const a = items[i]; return `<div class="item">${picture(itemArt[i], a[0], 42)}<div class="body"><b>${esc(a[0])}</b><small>${a[5]} · Lv ${s.level}</small></div><div class="acts"><button class="btn small" data-act="buyItem" data-arg="${i}:0" ${s.money < shopPrice(i, 0) ? 'disabled' : ''}>Common · ${money$(shopPrice(i, 0))}</button><button class="btn small ghost" data-act="buyItem" data-arg="${i}:1" ${s.money < shopPrice(i, 1) ? 'disabled' : ''}>Uncommon · ${money$(shopPrice(i, 1))}</button></div></div>`; }).join('')}</div>`;
 }
 function lifePets() {
   return sub('Companions') + `<p class="muted" style="font-size:13px;margin-bottom:8px">Adopt companions, train them to rank 5 and pick one to bring along.</p><div class="list">${pets.map((p, i) => { const l = s.pets[i] || 0, c = p[1] * (l + 1), locked = !owned(p[2]); return `<div class="item">${petArt(i).replace('width="65" height="65"', 'width="52" height="48"')}<div class="body"><b>${esc(p[0])}${l ? ' · Rank ' + l + '/5' : ''}</b><small>${esc(p[7])}</small><small>Per rank: ${statLine(p[3], p[4], p[5], [p[6] && 'heals ' + p[6] + ' every 10s'])}${locked ? ' · requires ' + esc(nodeById[p[2]]?.name) : ''}</small></div><div class="acts"><button class="btn small" data-act="petbuy" data-arg="${i}" ${locked || l >= 5 || s.money < c ? 'disabled' : ''}>${l >= 5 ? 'Max rank' : (l ? 'Train' : 'Adopt') + ' · ' + money$(c)}</button>${l ? `<button class="btn small ${s.activePet === i ? 'primary' : 'ghost'}" data-act="petsel" data-arg="${i}">${s.activePet === i ? 'With you' : 'Bring along'}</button>` : ''}</div></div>`; }).join('')}</div>`;
@@ -1941,7 +2262,7 @@ function lookControls() {
 const pct = v => (v * 100).toFixed(v < .1 ? 1 : 0) + '%';
 function renderYou() {
   const st = stats(), P = statParts(), mp = masteryPerks();
-  if (!changed('you', [youView, s.inventory, s.parts, s.money > 0 && s.gear.map(i => s.money >= gearUpgradeCost(i)), s.look, s.career, s.sp, s.attr, st, s.gear, s.gearLv, s.owned.length, s.home, s.decor, s.activePet, s.pets, s.training, masteredCount(), s.level])) return;
+  if (!changed('you', [youView, s.bag.length, gearVer, s.parts, s.money > 0 && equippedItems().map(it => { const c = rankCost(it); return s.money >= c.money && s.parts >= c.parts; }), s.level, s.look, s.career, s.sp, s.attr, st, s.owned.length, s.home, s.decor, s.activePet, s.pets, s.training, masteredCount(), s.level])) return;
   const el = $('scr-you'), n = v => Math.round(v) ? fmt(v) : '—';
   const rows = STAT_SOURCES.map(([k, label]) => `<tr><th>${label}</th><td>${n(P[k].p)}</td><td>${n(P[k].h)}</td><td>${n(P[k].d)}</td></tr>`).join('');
   const mult = `<tr class="mult"><th>Perks &amp; training</th><td>×${P.mult.p.toFixed(2)}</td><td>×${P.mult.h.toFixed(2)}</td><td>×${P.mult.d.toFixed(2)}</td></tr>`;
@@ -1949,9 +2270,9 @@ function renderYou() {
     const v = s.attr[k], eff = k === 'luck' ? '+' + pct(v * per) + ' crit · +' + (v * .1).toFixed(1) + '% loot' : '+' + fmt(v * per) + ' ' + what;
     return `<div class="attr"><div class="attrhead"><span class="tile" style="width:36px;height:36px;background:var(--gold-soft)">${icon(k === 'drive' ? 'bolt' : k === 'resil' ? 'heart' : k === 'grit' ? 'shield' : 'star', 18, '#7A4B07')}</span><div style="flex:1;min-width:0"><b>${name} · ${v}</b><small>${k === 'luck' ? '+0.4% crit chance per point' : '+' + per + ' ' + what + ' per point'}</small></div></div><small class="eff">${eff}</small><div class="row"><button class="btn small primary" data-act="attr" data-arg="${k}:1" ${s.sp < 1 ? 'disabled' : ''} aria-label="Add 1 point to ${name}">+1</button><button class="btn small" data-act="attr" data-arg="${k}:5" ${s.sp < 5 ? 'disabled' : ''} aria-label="Add 5 points to ${name}">+5</button><button class="btn small ghost" data-act="attr" data-arg="${k}:all" ${s.sp < 1 ? 'disabled' : ''}>All</button></div></div>`;
   }).join('');
-  const spare = Object.keys(s.inventory).filter(k => s.inventory[k] > 0 && !s.gear.includes(+k)).length;
+  const spare = s.bag.filter(it => { const cur = bagItem(s.equip[items[it.b][5]]); return !cur || (cur !== it && itemScore(it) > itemScore(cur)); }).length;
   const tabs = [['points', 'Stat points', s.sp], ['sources', 'Sources', 0], ['gear', 'Gear', spare], ['look', 'Look', 0]];
-  const body = youView === 'sources' ? `<p class="muted" style="font-size:13px;margin:-2px 0 8px">Everything that adds to your three core stats, from the Life Grid to your companion.</p>` + `<div class="card" style="overflow-x:auto"><table class="stable"><thead><tr><th></th><th>Impact</th><th><abbr title="Composure">Comp.</abbr></th><th><abbr title="Resistance">Resist.</abbr></th></tr></thead><tbody>${rows}${mult}<tr class="total"><th>Total</th><td>${fmt(st.p)}</td><td>${fmt(st.h)}</td><td>${fmt(st.d)}</td></tr></tbody></table></div>` : youView === 'gear' ? lifeGear() : youView === 'look' ? `<section class="card lookopts">${lookControls()}<p class="muted" style="font-size:12px;font-weight:700">Your career still adds its accessory, like glasses for research or a headset for tech.</p></section>` : `<div class="sechead"><h2>Stat points</h2><span class="chip ${s.sp ? 'gold' : ''}">${s.sp} to spend</span></div>
+  const body = youView === 'sources' ? combatPanel() + `<p class="muted" style="font-size:13px;margin:-2px 0 8px">Everything that adds to your three core stats, from the Life Grid to your companion.</p>` + `<div class="card" style="overflow-x:auto"><table class="stable"><thead><tr><th></th><th>Impact</th><th><abbr title="Composure">Comp.</abbr></th><th><abbr title="Resistance">Resist.</abbr></th></tr></thead><tbody>${rows}${mult}<tr class="total"><th>Total</th><td>${fmt(st.p)}</td><td>${fmt(st.h)}</td><td>${fmt(st.d)}</td></tr></tbody></table></div>` : youView === 'gear' ? lifeGear() : youView === 'look' ? `<section class="card lookopts">${lookControls()}<p class="muted" style="font-size:12px;font-weight:700">Your career still adds its accessory, like glasses for research or a headset for tech.</p></section>` : `<div class="sechead"><h2>Stat points</h2><span class="chip ${s.sp ? 'gold' : ''}">${s.sp} to spend</span></div>
   <p class="muted" style="font-size:13px;margin:-4px 0 8px">You get ${BAL.spPerLevel} stat point every level. Skill points for the Grid come from clearing career stages.</p>
   <div class="attrs">${attrCards}</div>
   <div style="margin-top:8px"><button class="btn small ghost" data-act="attrReset" ${ATTRS.some(([k]) => s.attr[k]) ? '' : 'disabled'}>Reset stat points (free)</button></div>`;
@@ -1985,13 +2306,18 @@ function renderJournal() {
    <li>Resistance reduces incoming stress by a percentage, so it stays useful against tougher obstacles.</li>
    <li>Lose a fight and you step back one stage to train for three wins, then retry automatically.</li>
    <li>Ability slots open at levels 8, 15 and 22. Abilities scale with your impact and composure.</li>
+   <li>Gear drops at your level and comes in four rarities. Rank items up (I to X) with parts and money. Rare items roll bonus stats, and set pieces add bonuses at 2 and 4 pieces.</li>
+   <li>Build the Library room to unlock research: permanent bonuses that keep progressing while you are away.</li>
+   <li>Obstacles have traits (armored, evasive, enraged…). Tap the trait badge in battle to see its counter.</li>
+   <li>Abilities can be ranked up with skill points (+20% per rank). Keystones on the Grid add ability and research slots.</li>
+   <li>Watch for Lucky Break bubbles in battle, and ace job interviews for a first-day XP bonus.</li>
    <li>Progress saves in this browser. While you are away you keep earning money, and stages keep advancing as long as the next one is safely winnable. You start with 2 hours of time away; six skills on the Grid add an hour each.</li>
    <li>Your home opens when you master Everyday Life, companions at level 10, businesses after your first career mastery and training at level 30.</li></ol></details>
   <div class="sechead"><h2>Settings</h2></div>
   <section class="card" style="display:grid;gap:10px">
    <label class="spread" style="font-weight:700;font-size:14px;min-height:44px"><span>Auto-switch careers after a mastery or when stuck</span><input type="checkbox" data-act="autoNext" ${s.autoNext ? 'checked' : ''} style="width:22px;height:22px;accent-color:#2F6F68"></label>
    <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="save">${icon('save', 16)}Save now</button><button class="btn small" data-act="export">${icon('download', 16)}Export</button><button class="btn small" data-act="copySave">${icon('save', 16)}Copy save</button><button class="btn small" data-act="import">${icon('upload', 16)}Import</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
-   <small class="muted">${esc(saveStatus)} · stored in this browser · v0.15.1</small>
+   <small class="muted">${esc(saveStatus)} · stored in this browser · v0.16</small>
    <div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px"><b style="font-size:14px">Cloud save</b><small class="muted">${esc(cloud.status)}</small>${!cloud.on ? '' : cloud.user ? `<div class="row" style="flex-wrap:wrap"><button class="btn small primary" data-act="cloudPush">${icon('upload', 16)}Save to cloud now</button><button class="btn small ghost" data-act="cloudSignOut">Sign out</button></div>` : cloud.ready ? `<button class="btn small primary" style="justify-self:start" data-act="cloudSignIn">Sign in with Google</button>` : ''}</div>
    <div class="row" style="flex-wrap:wrap"><button class="btn small" data-act="feedback">${icon('chat', 16)}Send feedback</button><button class="btn small" data-act="playStats">${icon('chart', 16)}Play stats</button><button class="btn small" data-act="tutReplay">${icon('repeat', 16)}Replay tutorial</button></div>
    <button class="btn small" style="color:#9A3412;justify-self:start" data-act="newgameSheet">Start a new game…</button>
@@ -2010,11 +2336,11 @@ function renderSheet() {
     h = `<div class="spread"><h2>Change career</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><p class="muted" style="font-size:13px">You battle your current job's obstacles. Switching keeps all your skills, gear and stat points.</p><div class="list">` + unlockedTracks().map(t => [t, s.progress[t] || {}]).sort((a, b) => (a[0] !== s.track) - (b[0] !== s.track) || !!a[1].mastered - !!b[1].mastered).map(([t]) => { const p = s.progress[t] || {}, E = trackEnemies(t), j = Math.min(p.unlocked || 0, E.length - 1), f = battleForecast(E[j], j); return `<button class="item" style="text-align:left;${t === s.track ? 'outline:2px solid #2F6F68' : ''}" data-act="work" data-arg="${t}">${careerTile(t, 40)}<div class="body"><b>${esc(t ? careers[t][0] : 'Figuring It Out · Everyday Life')}</b><small>$${careerPay(t).toFixed(1)}/min · ${p.mastered ? 'Mastered' : 'Stage ' + (j + 1) + ' of ' + E.length} · ${p.mastered ? 'farm for XP' : isGated(t, j) ? 'boss locked' : f.ok ? 'clears in ~' + secs(f.ttk) : !careerOpen(t) ? 'not ready · ' + Math.floor(careerReadiness(t) * 100) + '%' : 'too tough for now'}</small></div>${t === s.track ? '<span class="chip small">Now</span>' : !careerOpen(t) ? icon('lock', 18, '#8A7F6C') : icon('chev', 18, '#5B6B68')}</button>`; }).join('') + '</div>';
   } else if (sheetKind === 'loadout') {
     const list = Object.keys(abilities).filter(n => owned(byName[n])), st = stats();
-    h = `<div class="spread"><h2>Abilities · ${s.equipped.length}/${slots()} slots</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><div class="list">${list.length ? list.map(n => { const a = abilities[n], eq = s.equipped.includes(n), d = abilityDamage(a, st), hl = abilityHeal(a, st); return `<div class="item" ${eq ? 'style="outline:2px solid #2F6F68"' : ''}><div class="body"><b>${esc(n)}</b><small>${[d && fmt(d) + ' impact', hl && '+' + fmt(hl) + ' composure'].filter(Boolean).join(' · ')} · every ${a.cd}s</small></div><button class="btn small ${eq ? '' : 'primary'}" data-act="equipAb" data-arg="${esc(n)}" ${!eq && s.equipped.length >= slots() ? 'disabled' : ''}>${eq ? 'Remove' : 'Equip'}</button></div>`; }).join('') : '<p class="muted">Learn ★ abilities on the Grid. Basic attacks always work.</p>'}</div>
+    h = `<div class="spread"><h2>Abilities · ${s.equipped.length}/${slots()} slots</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><div class="list">${list.length ? list.map(n => { const a = abilities[n], eq = s.equipped.includes(n), d = abilityDamage(a, st), hl = abilityHeal(a, st); const rk = abilityRank(n), rc = abilityRankCost(n); return `<div class="item" ${eq ? 'style="outline:2px solid #2F6F68"' : ''}><div class="body"><b>${esc(n)} ${rk ? '<span class="chip small gold">Rank ' + RANK_NAMES[rk] + '</span>' : ''}</b><small>${[d && fmt(d) + ' impact', hl && '+' + fmt(hl) + ' composure'].filter(Boolean).join(' · ')} · every ${a.cd}s</small></div><div class="acts">${rk < 5 ? `<button class="btn small ghost" data-act="rankAb" data-arg="${esc(n)}" ${s.lp < rc ? 'disabled' : ''} title="+20% per rank">Rank up · ${rc} ${lpIcon(12)}</button>` : '<span class="chip small">Max rank</span>'}<button class="btn small ${eq ? '' : 'primary'}" data-act="equipAb" data-arg="${esc(n)}" ${!eq && s.equipped.length >= slots() ? 'disabled' : ''}>${eq ? 'Remove' : 'Equip'}</button></div></div>`; }).join('') : '<p class="muted">Learn ★ abilities on the Grid. Basic attacks always work.</p>'}</div>
     <div class="sechead" style="margin-top:6px"><h3>Saved builds</h3></div><div class="row" style="flex-wrap:wrap">${[0, 1, 2].map(k => `<span class="row" style="gap:4px;background:#fff;border-radius:12px;padding:4px 4px 4px 10px"><b style="font-size:13px">Build ${k + 1}</b><button class="btn small ghost" data-act="presetSave" data-arg="${k}">Save</button><button class="btn small ghost" data-act="presetLoad" data-arg="${k}" ${Array.isArray(s.presets[k]) ? '' : 'disabled'}>Load</button></span>`).join('')}</div>`;
   } else if (sheetKind === 'room') {
-    const j = sheetArg, r = rooms[j], cur = s.decor[j];
-    h = `<div class="spread"><h2>${esc(r[0])}</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div>${roomCard(j)}<div class="list">${furniture.map((f, k) => f[1] !== j ? '' : `<div class="item" ${cur === k ? 'style="outline:2px solid #2F6F68"' : ''}><div class="body"><b>${esc(f[0])} · ×${s.furniture[k] || 0}</b><small>${statLine(f[4], f[5], f[6], [f[7] && '+' + Math.round(f[7] * 100) + '% XP', f[8] && '+' + Math.round(f[8] * 100) + '% income'])}</small></div><div class="acts">${s.furniture[k] ? `<button class="btn small ${cur === k ? '' : 'primary'}" data-act="decor" data-arg="${k}">${cur === k ? 'Placed' : 'Place'}</button>` : ''}<button class="btn small ghost" data-act="fbuy" data-arg="${k}" ${s.money < f[2] ? 'disabled' : ''}>${money$(f[2])}</button><button class="btn small ghost" data-act="fcraft" data-arg="${k}" ${!owned('home-skill-0') || s.parts < f[3] ? 'disabled' : ''} title="${owned('home-skill-0') ? '' : 'Needs Furniture Crafting'}">Craft · ${f[3]}</button></div></div>`).join('')}</div>${owned('home-skill-0') ? '' : '<small class="muted">Crafting needs Furniture Crafting on the Grid. Furniture also drops in battle.</small>'}`;
+    const j = sheetArg, r = rooms[j], pl = placedIn(j);
+    h = `<div class="spread"><h2>${esc(r[0])} · ${pl.length}/${decorSlots()} placed</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div>${roomCard(j)}<div class="list">${furniture.map((f, k) => f[1] !== j ? '' : `<div class="item" ${pl.includes(k) ? 'style="outline:2px solid #2F6F68"' : ''}><div class="body"><b>${esc(f[0])} · ×${s.furniture[k] || 0}</b><small>${statLine(f[4], f[5], f[6], [f[7] && '+' + Math.round(f[7] * 100) + '% XP', f[8] && '+' + Math.round(f[8] * 100) + '% income'])}</small></div><div class="acts">${s.furniture[k] ? `<button class="btn small ${pl.includes(k) ? '' : 'primary'}" data-act="decor" data-arg="${k}">${pl.includes(k) ? 'Remove' : 'Place'}</button>` : ''}<button class="btn small ghost" data-act="fbuy" data-arg="${k}" ${s.money < f[2] ? 'disabled' : ''}>${money$(f[2])}</button><button class="btn small ghost" data-act="fcraft" data-arg="${k}" ${!owned('home-skill-0') || s.parts < f[3] ? 'disabled' : ''} title="${owned('home-skill-0') ? '' : 'Needs Furniture Crafting'}">Craft · ${f[3]}</button></div></div>`).join('')}</div><small class="muted">Each room holds ${decorSlots()} pieces${owned('home-skill-1') ? '' : ' (Interior Design on the Grid adds one more)'}. ${owned('home-skill-0') ? 'Furniture also drops in battle.' : 'Crafting needs Furniture Crafting on the Grid. Furniture also drops in battle.'}</small>`;
   } else if (sheetKind === 'cloud') {
     const d = cloud.remote || {}, when = d.clientTime ? new Date(d.clientTime).toLocaleString() : 'unknown time';
     h = `<div class="spread"><h2>Which progress should we keep?</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><div class="item"><div class="body"><b>Cloud save</b><small>Level ${esc(d.level)} · ${esc(d.skills)} skills · ${esc(d.mastered)} mastered · saved ${esc(when)}</small></div><button class="btn small primary" data-act="cloudUseRemote">Use this</button></div><div class="item"><div class="body"><b>This device</b><small>Level ${s.level} · ${skillCount()} skills · ${masteredCount()} mastered</small></div><button class="btn small" data-act="cloudKeepLocal">Keep this</button></div><small class="muted">The one you don't pick is replaced.</small>`;
@@ -2032,6 +2358,12 @@ function renderSheet() {
     h = `<div class="spread"><h2>Play stats</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><p class="muted" style="font-size:13px">Share this with the developer. It has your progress timeline but nothing personal.</p><textarea id="statsText" readonly style="width:100%;min-height:180px;font:12px ui-monospace,monospace;border:1px solid var(--line);border-radius:12px;padding:8px">${esc(playStatsText())}</textarea><button class="btn primary" data-act="copyStats">${icon('save', 16)}Copy play stats</button>`;
   } else if (sheetKind === 'feedback') {
     h = `<div class="spread"><h2>Send feedback</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><p class="muted" style="font-size:13px">What was fun, confusing or too slow? Your play stats are attached automatically.</p><textarea id="fbText" placeholder="I loved… / I got stuck when…" style="width:100%;min-height:120px;font:14px var(--body);border:1px solid var(--line);border-radius:12px;padding:8px"></textarea><div class="row" style="flex-wrap:wrap"><button class="btn primary" data-act="copyFeedback">${icon('save', 16)}Copy feedback and stats</button>${FEEDBACK_URL ? `<a class="btn" href="${esc(FEEDBACK_URL)}" target="_blank" rel="noopener">Open feedback page</a>` : ''}</div><p class="muted" style="font-size:12px">${FEEDBACK_URL ? 'Copy, then paste it on the feedback page.' : 'Copy it and send it to the developer however you usually talk to them.'}</p>`;
+  } else if (sheetKind === 'interview' && interview) {
+    const iv = interview, c = careers[iv.career][0];
+    if (iv.step < iv.qs.length) { const q = INTERVIEW[iv.qs[iv.step]];
+      h = `<div class="spread"><h2>Job interview · ${esc(c)}</h2><button class="iconbtn" data-act="ivSkip" aria-label="Skip">${icon('close', 18)}</button></div><p class="muted" style="margin-top:-4px">Question ${iv.step + 1} of 3${iv.last ? ' · ' + esc(iv.last) : ''}</p><p style="font:600 19px/1.3 var(--display);margin:6px 0 12px">“${esc(q[0])}”</p><div class="list">${q[1].map((a, k) => `<button class="btn wide" style="justify-content:flex-start;text-align:left" data-act="ivAnswer" data-arg="${k}">${esc(a)}</button>`).join('')}</div><button class="skip" style="background:none;border:0;color:var(--muted);font-weight:800;margin-top:8px;cursor:pointer" data-act="ivSkip">Skip the interview (no bonus)</button>`;
+    } else { const sc = iv.score;
+      h = `<div class="spread"><h2>${sc === 3 ? 'Aced it. You\'re hired!' : 'You\'re hired!'}</h2></div><p>${sc === 3 ? 'They called it the best interview they have ever seen. They might have been reading from a script.' : sc ? 'It went fine. They were going to hire you anyway; the paperwork was already printed.' : 'Somehow, you got the job. Nobody knows how. Least of all you.'}</p><div class="card"><div class="spread"><span>First-day bonus in ${esc(c)}</span><b>+${Math.round(s.ivBuff.xp * 100)}% XP for 10 min</b></div></div><button class="btn primary wide" data-act="ivDone">Start work</button>`; }
   } else if (sheetKind === 'newgame') {
     h = `<div class="spread"><h2>Start the whole game over?</h2><button class="iconbtn" data-act="closeSheet" aria-label="Close">${icon('close', 18)}</button></div><p>This erases your level, skills, careers, gear, home, companions, businesses and achievements in this browser, and you start again from "Congratulations, you exist."</p><p class="muted" style="font-size:13px">Want a backup first? Copy your save, then paste it back in with Import later.</p><div class="row" style="flex-wrap:wrap"><button class="btn" data-act="copySave">${icon('save', 16)}Copy save first</button><button class="btn primary" data-act="startOver" style="background:#9A3412;border-color:#9A3412">${ngArmed ? 'Tap again to erase everything' : 'Erase and start over'}</button></div>`;
   }
@@ -2056,7 +2388,7 @@ function showDiscovery() {
 }
 function closeDiscovery(change) {
   const i = currentDiscovery;
-  if (change && i !== null) setCareer(i);
+  if (change && i !== null && setCareer(i)) setTimeout(() => maybeInterview(i), 50);
   currentDiscovery = null; $('discovery').close(); renderAll(); save(); showDiscovery();
 }
 $('discovery').addEventListener('cancel', e => { e.preventDefault(); closeDiscovery(false); });
@@ -2095,7 +2427,7 @@ const ACT = {
   trophyClose: () => dismissTrophy(),
   stage: a => { const j = +a; if (j <= s.unlocked && !isGated(s.track, j)) { s.stage = j; s.retry = 0; s.retryTarget = null; s.lossStreak = 0; resetBattle(); } },
   trackSheet: () => openSheet('track'),
-  work: a => { const i = +a; if (i && !careerOpen(i)) { notice(careers[i][0] + ' is not ready yet · ' + Math.floor(careerReadiness(i) * 100) + '% of the way there'); return; } if (setCareer(i)) { if (sheetKind === 'track') closeSheet(); notice('Now working as ' + careers[i][0] + '. Skills, gear and stat points kept.'); if (!desktopMQ.matches && screen !== 'battle' && screen !== 'careers') setScreen('battle'); } },
+  work: a => { const i = +a; if (i && !careerOpen(i)) { notice(careers[i][0] + ' is not ready yet · ' + Math.floor(careerReadiness(i) * 100) + '% of the way there'); return; } if (setCareer(i)) { if (sheetKind === 'track') closeSheet(); maybeInterview(i); notice('Now working as ' + careers[i][0] + '. Skills, gear and stat points kept.'); if (!desktopMQ.matches && screen !== 'battle' && screen !== 'careers') setScreen('battle'); } },
   setTrack: a => ACT.work(a),
   attr: a => { const [k, n] = a.split(':'), want = n === 'all' ? s.sp : +n, add = Math.min(s.sp, want); if (ATTRS.some(x => x[0] === k) && add > 0) { s.attr[k] += add; s.sp -= add; const st = stats(); hp = Math.min(hp, st.h); } },
   attrReset: () => { const total = ATTRS.reduce((a, [k]) => a + s.attr[k], 0); ATTRS.forEach(([k]) => s.attr[k] = 0); s.sp += total; notice('Stat points returned: ' + total + '.'); },
@@ -2106,6 +2438,7 @@ const ACT = {
   cloudSignIn: () => cloudSignIn(), cloudSignOut: () => cloudSignOut(), cloudPush: () => cloudPush(true).then(ok => ok && notice('Saved to the cloud.')),
   cloudUseRemote: () => cloudUseRemote(), cloudKeepLocal: () => cloudKeepLocal(),
   loadout: () => openSheet('loadout'),
+  rankAb: a => { if (rankAbility(a)) notice(a + ' is now Rank ' + RANK_NAMES[abilityRank(a)] + '!'); else notice('Not enough skill points.'); },
   equipAb: a => { if (s.equipped.includes(a)) s.equipped = s.equipped.filter(x => x !== a); else if (s.equipped.length < slots() && owned(byName[a])) s.equipped.push(a); },
   presetSave: a => { s.presets[+a] = [...s.equipped]; notice('Build ' + (+a + 1) + ' saved.'); },
   presetLoad: a => { const p = s.presets[+a]; if (Array.isArray(p)) { s.equipped = p.filter(n => abilities[n] && owned(byName[n])).slice(0, slots()); notice('Build ' + (+a + 1) + ' loaded.'); } },
@@ -2126,18 +2459,27 @@ const ACT = {
   tutReplay: () => { s.tut = 0; closeSheet(); setScreen('battle'); renderCoach(); },
   openShop: () => { lifeView = 'shop'; setScreen('life'); lifeView = 'shop'; delete sig.life; },
   startOver: () => { if (!ngArmed) { ngArmed = true; renderSheet(); clearTimeout(ngTimer); ngTimer = setTimeout(() => { ngArmed = false; renderSheet(); }, 5000); return; } ngArmed = false; resetGame(); },
-  homeUp: () => { if (!lifeOpen('home')) return; const i = s.home; if (i < 3 && s.money >= homePrices[i]) { s.money -= homePrices[i]; s.home++; notice('Moved to ' + homeNames[s.home] + '!'); } },
+  homeUp: () => { if (!lifeOpen('home')) return; const i = s.home; if (i < homeNames.length - 1 && s.money >= homePrices[i]) { s.money -= homePrices[i]; s.home++; notice('Moved to ' + homeNames[s.home] + '!'); } },
   buildRoom: a => { if (!lifeOpen('home')) return; const j = +a, r = rooms[j]; if (!s.rooms.includes(j) && s.home >= r[1] && owned(r[3]) && s.money >= r[2]) { s.money -= r[2]; s.rooms.push(j); openSheet('room', j); } },
   roomSheet: a => openSheet('room', +a),
-  decor: a => { const k = +a, r = sheetArg; if (s.rooms.includes(r) && s.furniture[k] && furniture[k][1] === r) s.decor[r] = k; },
-  fbuy: a => { if (!lifeOpen('home')) return; const k = +a, f = furniture[k]; if (s.money >= f[2]) { s.money -= f[2]; s.furniture[k] = (s.furniture[k] || 0) + 1; if (s.decor[f[1]] === undefined && s.rooms.includes(f[1])) s.decor[f[1]] = k; } },
+  decor: a => { const k = +a, r = sheetArg; if (!s.rooms.includes(r) || !s.furniture[k] || furniture[k][1] !== r) return; const pl = (s.decor[r] ||= []); if (pl.includes(k)) pl.splice(pl.indexOf(k), 1); else if (placedIn(r).length < decorSlots()) pl.push(k); else notice('This room is full. Remove a piece first (' + decorSlots() + ' slots).'); },
+  fbuy: a => { if (!lifeOpen('home')) return; const k = +a, f = furniture[k]; if (s.money >= f[2]) { s.money -= f[2]; s.furniture[k] = (s.furniture[k] || 0) + 1; const pl = (s.decor[f[1]] ||= []); if (s.rooms.includes(f[1]) && placedIn(f[1]).length < decorSlots() && !pl.includes(k)) pl.push(k); } },
   fcraft: a => { if (!lifeOpen('home')) return; const k = +a, f = furniture[k]; if (owned('home-skill-0') && s.parts >= f[3]) { s.parts -= f[3]; s.furniture[k] = (s.furniture[k] || 0) + 1; } },
-  equip: a => { const i = +a; if (!s.inventory[i]) return; s.gear = s.gear.filter(j => items[j][5] !== items[i][5]); s.gear.push(i); },
-  unequip: a => { s.gear = s.gear.filter(j => j !== +a); },
-  salvage: a => { const i = +a; if (s.inventory[i] > (s.gear.includes(i) ? 1 : 0)) { s.inventory[i]--; s.parts += i >= 16 ? 5 : i >= 9 ? 3 : 1; } },
-  upgrade: a => { const i = +a, c = gearUpgradeCost(i); if ((s.gearLv[i] || 0) < 10 && s.money >= c) { s.money -= c; s.gearLv[i] = (s.gearLv[i] || 0) + 1; notice(items[i][0] + ' upgraded to level ' + s.gearLv[i] + '.'); } },
-  buy: a => { const i = +a; if (s.money >= items[i][1]) { s.money -= items[i][1]; s.inventory[i] = (s.inventory[i] || 0) + 1; notice('Bought ' + items[i][0] + '. Equip it in Gear.'); } },
-  craft: a => { const i = +a, c = Math.ceil(items[i][1] / 25); if (s.parts >= c) { s.parts -= c; s.inventory[i] = (s.inventory[i] || 0) + 1; notice('Crafted ' + items[i][0] + '.'); } },
+  research: a => { if (startResearch(a)) notice('Research started.'); else notice(s.rActive.length >= researchSlots() ? 'All research slots are busy.' : 'Not enough money.'); },
+  lucky: () => claimLucky(),
+  traitInfo: () => { const e = curEnemy(), m = mechanic(e, curMechIndex()); notice(TRAITS[m][0] + ': ' + TRAITS[m][1] + ' Counter: ' + TRAITS[m][2]); },
+  ivAnswer: a => interviewAnswer(+a),
+  ivDone: () => { interview = null; closeSheet(); },
+  ivSkip: () => { if (interview) { s.interviewed.push(interview.career); interview = null; closeSheet(); } },
+  equipItem: a => { const it = bagItem(+a); if (it) { s.equip[items[it.b][5]] = it.u; gearVer++; } },
+  salvageItem: a => { const v = salvageItem(+a); if (v) notice('Salvaged for ' + v + ' parts.'); },
+  salvageWorse: () => { let n = 0, v = 0; for (const it of [...s.bag]) { const cur = bagItem(s.equip[items[it.b][5]]); if (cur && cur !== it && itemScore(it) <= itemScore(cur)) { v += salvageItem(it.u); n++; } } notice('Salvaged ' + n + ' items for ' + v + ' parts.'); },
+  equipBest: () => { equipBestGear(); notice('Equipped your best gear.'); },
+  rankUp: a => { const it = bagItem(+a); if (rankUp(+a)) notice(items[it.b][0] + ' is now Rank ' + RANK_NAMES[it.k] + '!'); },
+  buyItem: a => { const [b, r] = a.split(':').map(Number), c = shopPrice(b, r); if (isEveryday(b) && r <= 1 && s.money >= c) { s.money -= c; addItem(makeItem(b, s.level, r), true); notice('Bought ' + items[b][0] + '.'); } },
+  craftRare: a => { const c = craftCost(2); if (s.parts >= c.parts && s.money >= c.money) { s.parts -= c.parts; s.money -= c.money; const it = makeItem(pickBase(2, a), s.level, 2); addItem(it, true); notice('Crafted ' + items[it.b][0] + '!'); } },
+  craftSet: a => { const [si, sl] = a.split(':'), c = craftCost(2); if (s.parts >= c.parts && s.money >= c.money) { s.parts -= c.parts; s.money -= c.money; const b = items.findIndex(x => x[7] === +si && x[5] === sl); const it = makeItem(b, s.level, 2); addItem(it, true); notice('Crafted ' + items[b][0] + '!'); } },
+  craftLegend: () => { const c = craftCost(3); if (s.parts >= c.parts && s.money >= c.money) { s.parts -= c.parts; s.money -= c.money; const it = makeItem(pickBase(3), s.level, 3); addItem(it, true); notice('Crafted a Legendary ' + items[it.b][0] + '!'); } },
   petbuy: a => { if (!lifeOpen('pets')) return; const i = +a, l = s.pets[i] || 0, c = pets[i][1] * (l + 1); if (l < 5 && owned(pets[i][2]) && s.money >= c) { s.money -= c; s.pets[i] = l + 1; if (s.activePet === null) s.activePet = i; } },
   petsel: a => { const i = +a; if (s.pets[i]) s.activePet = s.activePet === i ? null : i; },
   business: a => { if (!lifeOpen('business')) return; const i = +a, l = s.businesses[i] || 0, c = businessCost(i); if (s.progress[i]?.mastered && l < 5 && s.money >= c) { s.money -= c; s.businesses[i] = l + 1; } },
@@ -2163,7 +2505,7 @@ document.addEventListener('click', e => {
   e.preventDefault();
   fn(el.dataset.arg, el);
   if (tutActive()) renderCoach();
-  if (!['nav', 'trophyClose', 'help', 'tipClose', 'playStats', 'feedback', 'copyStats', 'copyFeedback', 'zoomIn', 'zoomOut', 'zoomAll', 'region', 'search', 'goal', 'discoveryKeep', 'discoverySwitch', 'closeSheet', 'cloudSignIn', 'cloudSignOut', 'cloudPush', 'cloudUseRemote', 'cloudKeepLocal'].includes(el.dataset.act)) { renderAll(); save(); }
+  if (!['nav', 'trophyClose', 'traitInfo', 'help', 'tipClose', 'playStats', 'feedback', 'copyStats', 'copyFeedback', 'zoomIn', 'zoomOut', 'zoomAll', 'region', 'search', 'goal', 'discoveryKeep', 'discoverySwitch', 'closeSheet', 'cloudSignIn', 'cloudSignOut', 'cloudPush', 'cloudUseRemote', 'cloudKeepLocal'].includes(el.dataset.act)) { renderAll(); save(); }
   else if (el.dataset.act === 'region' || el.dataset.act === 'zoomAll') renderRegions();
 });
 document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('g[role=button][data-act]')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
